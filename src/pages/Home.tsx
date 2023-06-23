@@ -2,46 +2,54 @@ import { motion } from "framer-motion";
 import Footer from "../components/common/Footer";
 import Header from "../components/common/Header";
 import { styled } from "styled-components";
-import { DragEventHandler, MouseEventHandler, useRef } from "react";
+import { useRef } from "react";
+import Layout from "../components/common/Layout";
+import { RandomColor } from "../utils/functions";
+import {} from "typescript";
 
 const Machine = styled(motion.div)`
+  display: flex;
+  flex-wrap: wrap;
   width: 500px;
   height: 500px;
   border: 1px solid red;
+  border-radius: 10px;
 `;
-const Item = styled(motion.div)`
+const Item = styled(motion.div)<{ bgcolor: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 50px;
-  height: 50px;
-  border: 1px solid red;
+  width: 70px;
+  height: 70px;
+  background-color: ${(props) => props.bgcolor};
   border-radius: 50%;
   aspect-ratio: 1 / 1;
+  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.3);
 `;
 
 const Home = () => {
   const machineRef = useRef<HTMLDivElement>(null);
   const items = Array.from({ length: 12 }).map((x, i) => i + 1);
 
-  const onDrag = (event: MouseEvent | TouchEvent, info: any) => {
-    console.log(info);
-  };
+  const onDrag = (event: MouseEvent | TouchEvent, info: any) => {};
 
   return (
-    <>
+    <Layout>
       <Header />
-      <div style={{ height: "80vh" }}>
-        <Machine ref={machineRef}>
-          {items.map((item, i) => (
-            <Item drag dragConstraints={machineRef} dragElastic={0}>
-              {item}
-            </Item>
-          ))}
-        </Machine>
-      </div>
+      <Machine ref={machineRef}>
+        {items.map((item, i) => (
+          <Item
+            drag
+            dragConstraints={machineRef}
+            dragElastic={0}
+            bgcolor={RandomColor()}
+            whileTap={{ scale: 1.2, zIndex: 99 }}
+            whileDrag={{ scale: 1.2, zIndex: 99 }}
+          ></Item>
+        ))}
+      </Machine>
       <Footer />
-    </>
+    </Layout>
   );
 };
 
