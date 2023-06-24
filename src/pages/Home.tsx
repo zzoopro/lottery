@@ -12,7 +12,7 @@ const Machine = styled(motion.div)`
   flex-wrap: wrap;
   width: 85%;
   margin: 0 auto;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1 / 1.2;
   background-color: #f1f1f1;
   border-radius: 10px;
 `;
