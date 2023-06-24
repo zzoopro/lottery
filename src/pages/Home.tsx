@@ -14,7 +14,7 @@ const Machine = styled(motion.div)`
   margin: 0 auto;
   aspect-ratio: 1 / 1.2;
   background-color: #f1f1f1;
-  border-radius: 10px;
+  border-radius: 30px;
 `;
 const Item = styled(motion.div)<{ bgcolor: string }>`
   display: flex;
@@ -25,7 +25,7 @@ const Item = styled(motion.div)<{ bgcolor: string }>`
   background-color: ${(props) => props.bgcolor};
   border-radius: 50%;
   aspect-ratio: 1 / 1;
-  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.2);
 `;
 
 const Home = () => {
