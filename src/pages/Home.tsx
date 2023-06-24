@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import Footer from "../components/common/Footer";
 import Header from "../components/common/Header";
 import { styled } from "styled-components";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Layout from "../components/common/Layout";
 import { RandomColor } from "../utils/functions";
 import {} from "typescript";
@@ -33,6 +33,8 @@ const Home = () => {
   const items = Array.from({ length: 12 }).map((x, i) => i + 1);
 
   const onDrag = (event: MouseEvent | TouchEvent, info: any) => {};
+
+  useEffect(() => {}, []);
 
   return (
     <Layout>
