@@ -3,17 +3,19 @@ import { ThemeProvider } from "styled-components";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { theme } from "./css/theme";
 import Router from "./Router";
+import GlobalStyle from "./css/GlobalStyle";
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <RecoilRoot>
-      <ThemeProvider theme={theme}>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />
           <Router />
-        </QueryClientProvider>
-      </ThemeProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
     </RecoilRoot>
   );
 }

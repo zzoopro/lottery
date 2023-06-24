@@ -10,9 +10,9 @@ import {} from "typescript";
 const Machine = styled(motion.div)`
   display: flex;
   flex-wrap: wrap;
-  width: 90%;
-  height: 400px;
+  width: 85%;
   margin: 0 auto;
+  aspect-ratio: 1 / 1;
   background-color: #f1f1f1;
   border-radius: 10px;
 `;
@@ -30,16 +30,13 @@ const Item = styled(motion.div)<{ bgcolor: string }>`
 
 const Home = () => {
   const machineRef = useRef<HTMLDivElement>(null);
-  const items = Array.from({ length: 12 }).map((x, i) => i + 1);
+  const items = Array.from({ length: 10 }).map((x, i) => i + 1);
 
   const onDrag = (event: MouseEvent | TouchEvent, info: any) => {};
 
-  useEffect(() => {}, []);
-
   return (
     <Layout>
-      {/* <Header /> */}
-      <h1>뽑기장수</h1>
+      <Header />
       <Machine ref={machineRef}>
         {items.map((item, i) => (
           <Item
