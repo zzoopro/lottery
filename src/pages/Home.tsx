@@ -10,8 +10,9 @@ import {} from "typescript";
 const Machine = styled(motion.div)`
   display: flex;
   flex-wrap: wrap;
-  width: 100%;
+  width: 90%;
   height: 400px;
+  margin: 0 auto;
   background-color: #f1f1f1;
   border-radius: 10px;
 `;
