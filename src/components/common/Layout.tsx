@@ -1,7 +1,11 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { styled } from "styled-components";
+import Header from "./Header";
+import Main from "./Main";
+import Footer from "./Footer";
 
 const Scafford = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -12,10 +16,16 @@ const Scafford = styled.div`
 `;
 
 interface LayoutProps {
-  children: React.ReactElement | React.ReactElement[];
+  children: ReactNode;
 }
 const Layout = ({ children }: LayoutProps) => {
-  return <Scafford>{children}</Scafford>;
+  return (
+    <Scafford>
+      <Header />
+      <Main>{children}</Main>
+      <Footer />
+    </Scafford>
+  );
 };
 
 export default React.memo(Layout);

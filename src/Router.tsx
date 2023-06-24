@@ -2,7 +2,10 @@ import React, { Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
 
-const router = createBrowserRouter([{ path: "/", element: <Home /> }]);
+const router = createBrowserRouter([
+  { path: "/", element: <Home /> },
+  { path: "/:letterId", element: <Home /> },
+]);
 
 const Router = () => {
   return (

@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 const FooterTag = styled.div``;
 
 const Footer = () => {
-  return <FooterTag>Footer</FooterTag>;
+  return <FooterTag></FooterTag>;
 };
 
 export default React.memo(Footer);
