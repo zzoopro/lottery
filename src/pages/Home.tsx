@@ -36,7 +36,8 @@ const Home = () => {
 
   return (
     <Layout>
-      <Header />
+      {/* <Header /> */}
+      <h1>뽑기장수</h1>
       <Machine ref={machineRef}>
         {items.map((item, i) => (
           <Item
@@ -49,7 +50,7 @@ const Home = () => {
           ></Item>
         ))}
       </Machine>
-      <Footer />
+      {/* <Footer /> */}
     </Layout>
   );
 };
