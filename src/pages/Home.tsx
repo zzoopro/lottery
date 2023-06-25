@@ -1,8 +1,16 @@
-import { AnimatePresence, PanInfo, Variants, motion } from "framer-motion";
+import {
+  AnimatePresence,
+  PanInfo,
+  Variants,
+  motion,
+  useDragControls,
+} from "framer-motion";
 import { styled } from "styled-components";
 import {
+  DragEventHandler,
   MouseEvent,
   MouseEventHandler,
+  TouchEventHandler,
   useCallback,
   useEffect,
   useRef,
@@ -11,6 +19,7 @@ import {
 import Layout from "../components/common/Layout";
 import { RandomColor } from "../utils/functions";
 import { useNavigate, useParams } from "react-router-dom";
+import { isTypeReferenceNode } from "typescript";
 
 const Machine = styled(motion.div)`
   position: relative;
@@ -36,7 +45,6 @@ const LetterWrap = styled.div`
   position: fixed;
   top: 100px;
   width: 300px;
-  border: 1px solid red;
   aspect-ratio: 1 / 1.2;
   overflow: hidden;
   pointer-events: none;
@@ -53,7 +61,7 @@ const Letter = styled(motion.div)<{ bgcolor: string }>`
   aspect-ratio: 1 / 1.2;
   background-color: ${(props) => props.bgcolor};
   pointer-events: auto;
-  z-index: 500;
+  z-index: 10;
 `;
 
 const items = Array.from({ length: 10 })
@@ -63,7 +71,7 @@ const items = Array.from({ length: 10 })
     bgColor: RandomColor(),
   }));
 
-type DragEvent = (
+type DragEventHandlerType = (
   event: MouseEvent | TouchEvent | PointerEvent,
   info: PanInfo
 ) => void;
@@ -84,12 +92,38 @@ const Home = () => {
   const navigate = useNavigate();
   const params = useParams<{ letterId: string }>();
   const machineRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef<boolean>(false);
 
   const [letterBgColor, setLetterBgColor] = useState<string>("");
+  const controls = useDragControls();
+
+  useEffect(() => {
+    if (machineRef.current) {
+      const machine = machineRef.current;
+      const rect = machine.getBoundingClientRect();
+      const machineWidth = rect.width;
+      const machineHeight = rect.height;
+
+      items.forEach((item, index) => {
+        const itemRef = machine.childNodes[index] as HTMLDivElement;
+        const itemWidth = itemRef.offsetWidth;
+        const itemHeight = itemRef.offsetHeight;
+        const maxX = machineWidth - itemWidth;
+        const maxY = machineHeight - itemHeight;
+
+        const randomX = Math.floor(Math.random() * maxX);
+        const randomY = Math.floor(Math.random() * maxY);
+
+        itemRef.style.left = `${randomX}px`;
+        itemRef.style.top = `${randomY}px`;
+      });
+    }
+  }, []);
 
   const onClick = useCallback(
-    (letterId: string): MouseEventHandler =>
+    (letterId: string): MouseEventHandler & TouchEventHandler =>
       (event) => {
+        if (isDragging.current) return;
         navigate(`/${letterId}`);
         const backgroundColor = window.getComputedStyle(
           event.target as Element
@@ -106,19 +140,29 @@ const Home = () => {
     [navigate]
   );
 
+  const onDragStart: DragEventHandlerType = useCallback((event, info) => {
+    isDragging.current = true;
+  }, []);
+  const onDragEnd: DragEventHandlerType = useCallback((event, info) => {
+    isDragging.current = false;
+  }, []);
+
   return (
     <Layout>
       <Machine ref={machineRef}>
         {items.map((item, i) => (
           <Item
             key={i}
-            onClickCapture={onClick(String(item.value))}
+            onClick={onClick(String(item.value))}
             drag
+            onDragStart={onDragStart as any}
+            onDragEnd={onDragEnd as any}
             dragConstraints={machineRef}
             dragElastic={0}
             bgcolor={item.bgColor}
-            whileTap={{ scale: 1.2, zIndex: 99 }}
-            whileDrag={{ scale: 1.2, zIndex: 99 }}
+            whileTap={{ scale: 1.2, zIndex: 2 }}
+            whileDrag={{ scale: 1.2, zIndex: 2 }}
+            dragControls={controls}
           ></Item>
         ))}
       </Machine>

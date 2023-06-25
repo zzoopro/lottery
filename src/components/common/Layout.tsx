@@ -13,6 +13,7 @@ const Scafford = styled.div`
   height: max-content;
   padding: 10px;
   margin: 0 auto;
+  border: 0px 1px 0px 1px red;
 `;
 
 interface LayoutProps {

@@ -11,6 +11,7 @@ ${reset}
 }
 body {    
   overflow: hidden;
+  background-color: #d9d9d9;
 }
 
 `;
