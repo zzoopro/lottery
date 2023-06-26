@@ -7,7 +7,6 @@ import {
 } from "framer-motion";
 import { styled } from "styled-components";
 import {
-  DragEventHandler,
   MouseEvent,
   MouseEventHandler,
   TouchEventHandler,
@@ -19,7 +18,6 @@ import {
 import Layout from "../components/common/Layout";
 import { RandomColor } from "../utils/functions";
 import { useNavigate, useParams } from "react-router-dom";
-import { isTypeReferenceNode } from "typescript";
 
 const Machine = styled(motion.div)`
   position: relative;
@@ -90,7 +88,7 @@ const letterVariants: Variants = {
 
 const Home = () => {
   const navigate = useNavigate();
-  const params = useParams<{ letterId: string }>();
+  const { userType, letterId } = useParams();
   const machineRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef<boolean>(false);
 
@@ -124,20 +122,20 @@ const Home = () => {
     (letterId: string): MouseEventHandler & TouchEventHandler =>
       (event) => {
         if (isDragging.current) return;
-        navigate(`/${letterId}`);
+        navigate(`/${userType}/random-box/${letterId}`);
         const backgroundColor = window.getComputedStyle(
           event.target as Element
         ).backgroundColor;
         setLetterBgColor(backgroundColor);
       },
-    [navigate]
+    [navigate, userType]
   );
   const closeLetter: MouseEventHandler = useCallback(
     (event) => {
-      navigate(`/`);
+      navigate(`/${userType}/random-box`);
       setLetterBgColor("");
     },
-    [navigate]
+    [navigate, userType]
   );
 
   const onDragStart: DragEventHandlerType = useCallback((event, info) => {
@@ -168,9 +166,9 @@ const Home = () => {
       </Machine>
       <LetterWrap>
         <AnimatePresence>
-          {params.letterId && (
+          {letterId && (
             <Letter
-              onClickCapture={closeLetter}
+              onClick={closeLetter}
               bgcolor={letterBgColor}
               variants={letterVariants}
               transition={{ type: "tween", duration: 0.2 }}

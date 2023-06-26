@@ -1,20 +1,24 @@
 import React, { Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./pages/Home";
-import PopupWrap from "./components/common/PopupWrap";
+
 import Loading from "./components/common/Loading";
 
+import Home from "./pages/Home";
+import Splash from "./pages/Splash";
+import PopupWrap from "./components/common/PopupWrap";
+
 const router = createBrowserRouter([
-  { path: "/", element: <Home /> },
-  { path: "/:letterId", element: <Home /> },
+  { path: "/", element: <Splash /> },
+  { path: "/:userType/random-box/", element: <Home /> },
+  { path: "/:userType/random-box/:letterId", element: <Home /> },
 ]);
 
 const Router = () => {
   return (
     <Suspense fallback={<div>loading</div>}>
-      <PopupWrap />
-      <RouterProvider router={router} />
       <Loading />
+      <RouterProvider router={router} />
+      <PopupWrap />
     </Suspense>
   );
 };

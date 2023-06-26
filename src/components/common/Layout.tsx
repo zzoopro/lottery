@@ -9,11 +9,12 @@ const Scafford = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 480px;
+  max-width: 450px;
   height: max-content;
+  min-height: 100vh;
   padding: 10px;
   margin: 0 auto;
-  border: 0px 1px 0px 1px red;
+  background-color: #333;
 `;
 
 interface LayoutProps {

@@ -12,11 +12,12 @@ export interface IPopup {
   numberOfButton: number;
   confirmText: string;
   rejectText: string;
+  withDimmed: boolean;
 }
 
 export const INIT_POPUP: IPopup = {
-  isShow: false,
   element: null,
+  isShow: false,
   title: "",
   content: "",
   onConfirm: undefined,
@@ -25,7 +26,9 @@ export const INIT_POPUP: IPopup = {
   numberOfButton: 1,
   confirmText: "",
   rejectText: "",
+  withDimmed: false,
 };
+
 export const popupAtom = atom<IPopup>({
   key: "popup", // unique ID (with respect to other atoms/selectors)
   default: INIT_POPUP, // default value (aka initial value)
