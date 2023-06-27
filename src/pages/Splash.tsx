@@ -12,7 +12,7 @@ const Background = styled.div`
   max-width: 450px;
   margin: 0 auto;
   background-image: url("./images/splash-bg.jpg");
-  background-size: contain;
+  background-size: cover;
 `;
 
 const Img = styled(motion.img)`
