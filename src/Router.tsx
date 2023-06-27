@@ -6,9 +6,11 @@ import Loading from "./components/common/Loading";
 import Home from "./pages/Home";
 import Splash from "./pages/Splash";
 import PopupWrap from "./components/common/PopupWrap";
+import Signup from "./pages/Signup";
 
 const router = createBrowserRouter([
   { path: "/", element: <Splash /> },
+  { path: "/signup", element: <Signup /> },
   { path: "/:userType/random-box/", element: <Home /> },
   { path: "/:userType/random-box/:letterId", element: <Home /> },
 ]);

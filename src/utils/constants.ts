@@ -16,3 +16,9 @@ export const hexArray = [
   "E",
   "F",
 ];
+
+// API
+export const POST = "POST";
+export const GET = "GET";
+
+export const USER = "user";

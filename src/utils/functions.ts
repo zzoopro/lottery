@@ -1,3 +1,4 @@
+import { OS } from "../atom/atom";
 import { hexArray } from "./constants";
 
 export function RandomColor() {
@@ -7,4 +8,13 @@ export function RandomColor() {
     color += letters[Math.floor(Math.random() * 16)];
   }
   return color;
+}
+
+export function osCheck(): OS {
+  if (/Android/i.test(navigator.userAgent)) return "android";
+  if (/iPhone|iPad/i.test(navigator.userAgent)) return "ios";
+  return "web";
+  // return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+  //   navigator.userAgent
+  // );
 }

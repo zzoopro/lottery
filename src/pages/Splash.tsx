@@ -157,7 +157,7 @@ const Splash = () => {
         }}
         src="/images/capsule.png"
       />
-      <Button onClick={() => navigate("/master/random-box")}>시작하기</Button>
+      <Button onClick={() => navigate("/signup")}>시작하기</Button>
     </Background>
   );
 };

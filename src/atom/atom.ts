@@ -38,3 +38,9 @@ export const loadingAtom = atom<boolean>({
   key: "loading",
   default: false,
 });
+
+export type OS = "android" | "ios" | "web";
+export const osAtom = atom<OS>({
+  key: "osCheck",
+  default: "web",
+});
