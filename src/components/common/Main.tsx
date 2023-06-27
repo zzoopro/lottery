@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 
 const MainTag = styled.main`
   width: 100%;
-  height: max-content;
+  height: 100%;
 `;
 
 interface MainProps {

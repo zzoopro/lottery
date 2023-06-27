@@ -1,16 +1,15 @@
 import { styled } from "styled-components";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import Layout from "../components/common/Layout";
 
 const Background = styled.div`
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
-  max-width: 450px;
-  margin: 0 auto;
+  width: 100%;
+  height: 100%;
   background-image: url("./images/splash-bg.jpg");
   background-size: cover;
 `;
@@ -99,66 +98,68 @@ const Button = styled.div`
 const Splash = () => {
   const navigate = useNavigate();
   return (
-    <Background>
-      <Star1
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ repeat: Infinity, repeatDelay: 0.2, duration: 0.2 }}
-        src="/images/star-1.png"
-      />
-      <Star2
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ repeat: Infinity, duration: 0.4 }}
-        src="/images/star-2.png"
-      />
-      <Star3
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ repeat: Infinity, duration: 0.3 }}
-        src="/images/star-3.png"
-      />
-      <Star4
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ repeat: Infinity, duration: 0.15 }}
-        src="/images/star-4.png"
-      />
-      <Star5
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ repeat: Infinity, duration: 0.25 }}
-        src="/images/star-4.png"
-      />
-      <Logo
-        initial={{
-          scale: 0,
-        }}
-        animate={{
-          scale: 1,
-        }}
-        whileTap={{
-          scale: 0.9,
-          rotate: -5,
-        }}
-        src="/images/logo.png"
-      ></Logo>
-      <Capsule
-        initial={{
-          y: 0,
-        }}
-        animate={{
-          y: [0, 15, 0],
-        }}
-        transition={{ repeat: Infinity, repeatDelay: 2, duration: 0.4 }}
-        whileTap={{
-          scale: 1.2,
-          rotate: 720,
-        }}
-        src="/images/capsule.png"
-      />
-      <Button onClick={() => navigate("/signup")}>시작하기</Button>
-    </Background>
+    <Layout>
+      <Background>
+        <Star1
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ repeat: Infinity, repeatDelay: 0.2, duration: 0.2 }}
+          src="/images/star-1.png"
+        />
+        <Star2
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ repeat: Infinity, duration: 0.4 }}
+          src="/images/star-2.png"
+        />
+        <Star3
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ repeat: Infinity, duration: 0.3 }}
+          src="/images/star-3.png"
+        />
+        <Star4
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ repeat: Infinity, duration: 0.15 }}
+          src="/images/star-4.png"
+        />
+        <Star5
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ repeat: Infinity, duration: 0.25 }}
+          src="/images/star-4.png"
+        />
+        <Logo
+          initial={{
+            scale: 0,
+          }}
+          animate={{
+            scale: 1,
+          }}
+          whileTap={{
+            scale: 0.9,
+            rotate: -5,
+          }}
+          src="/images/logo.png"
+        ></Logo>
+        <Capsule
+          initial={{
+            y: 0,
+          }}
+          animate={{
+            y: [0, 15, 0],
+          }}
+          transition={{ repeat: Infinity, repeatDelay: 2, duration: 0.4 }}
+          whileTap={{
+            scale: 1.2,
+            rotate: 720,
+          }}
+          src="/images/capsule.png"
+        />
+        <Button onClick={() => navigate("/signup")}>시작하기</Button>
+      </Background>
+    </Layout>
   );
 };
 

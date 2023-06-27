@@ -1,23 +1,20 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useCallback, useEffect } from "react";
 import { styled } from "styled-components";
-import Header from "./Header";
-import Main from "./Main";
-import Footer from "./Footer";
 import { useRecoilState } from "recoil";
-import { osAtom } from "../../atom/atom";
+import { OS, osAtom } from "../../atom/atom";
 import { osCheck } from "../../utils/functions";
 
-const Scafford = styled.div<{ mobile: boolean }>`
+const Scafford = styled.div<{ os: OS }>`
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 450px;
-  height: max-content;
-  max-height: ${(props) => (props.mobile ? "100vh" : "800px")};
-  padding: 10px;
-  margin: 0 auto;
+  height: ${(props) => (props.os !== "web" ? "100vh" : "800px")};
+  margin: ${(props) => (props.os !== "web" ? "auto" : "15vh auto")};
   background-color: #333;
+  border-radius: ${(props) => (props.os === "web" ? "10px" : "0px")};
+  overflow: hidden;
 `;
 
 interface LayoutProps {
@@ -25,17 +22,17 @@ interface LayoutProps {
 }
 const Layout = ({ children }: LayoutProps) => {
   const [os, setOs] = useRecoilState(osAtom);
-  useEffect(() => {
+  const resize = useCallback(() => {
     setOs(osCheck());
   }, [setOs]);
 
-  return (
-    <Scafford mobile={os !== "web"}>
-      <Header />
-      <Main>{children}</Main>
-      <Footer />
-    </Scafford>
-  );
+  useEffect(() => {
+    setOs(osCheck());
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
+  }, [setOs, resize]);
+
+  return <Scafford os={os}>{children}</Scafford>;
 };
 
 export default React.memo(Layout);
