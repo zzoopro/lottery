@@ -103,7 +103,7 @@ const Splash = () => {
       <Star1
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ repeat: Infinity, repeatDelay: 0.5, duration: 0.2 }}
+        transition={{ repeat: Infinity, repeatDelay: 0.2, duration: 0.2 }}
         src="/images/star-1.png"
       />
       <Star2
