@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/common/Layout";
-import Background from "../components/common/Background";
+import Background from "../components/common/UI/Background";
 
 const Img = styled(motion.img)`
   -webkit-user-select: none;
@@ -14,12 +14,16 @@ const Img = styled(motion.img)`
   -khtml-user-drag: none;
   -moz-user-drag: none;
   -o-user-drag: none;
-  user-drag: none;
+  /* user-drag: none; */
 `;
 
 const Logo = styled(Img)`
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  margin-left: 5px;
+  transform: translate(-50%, -50%);
   width: 75%;
-  margin-left: 20px;
 `;
 
 const Capsule = styled(Img)`
@@ -120,19 +124,7 @@ const Splash = () => {
           transition={{ repeat: Infinity, duration: 0.25 }}
           src="/images/star-4.png"
         />
-        <Logo
-          initial={{
-            scale: 0,
-          }}
-          animate={{
-            scale: 1,
-          }}
-          whileTap={{
-            scale: 0.9,
-            rotate: -5,
-          }}
-          src="/images/logo.png"
-        ></Logo>
+        <Logo src="/images/logo.png" />
         <Capsule
           initial={{
             y: 0,

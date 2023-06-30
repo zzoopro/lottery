@@ -4,7 +4,7 @@ import { useRecoilState } from "recoil";
 import { OS, osAtom } from "../../atom/atom";
 import { osCheck } from "../../utils/functions";
 
-const Scafford = styled.div<{ os: OS }>`
+const Frame = styled.div<{ os: OS }>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -12,7 +12,6 @@ const Scafford = styled.div<{ os: OS }>`
   max-width: 450px;
   height: ${(props) => (props.os !== "web" ? "100vh" : "800px")};
   margin: ${(props) => (props.os !== "web" ? "auto" : "auto")};
-  background-color: #333;
   border-radius: ${(props) => (props.os === "web" ? "10px" : "0px")};
   overflow: hidden;
 `;
@@ -32,7 +31,7 @@ const Layout = ({ children }: LayoutProps) => {
     return () => window.removeEventListener("resize", resize);
   }, [setOs, resize]);
 
-  return <Scafford os={os}>{children}</Scafford>;
+  return <Frame os={os}>{children}</Frame>;
 };
 
 export default React.memo(Layout);
