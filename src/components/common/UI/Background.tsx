@@ -1,12 +1,20 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { styled } from "styled-components";
 
-const Bg = styled.div<{ bgimg: string }>`
+const Div = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
-  background-image: ${({ bgimg }) => `url(${bgimg})`};
-  background-size: cover;
+`;
+
+const Bg = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  object-fit: cover;
 `;
 
 interface BackgroundProps {
@@ -14,7 +22,12 @@ interface BackgroundProps {
   bgImg: string;
 }
 const Background = ({ children, bgImg }: BackgroundProps) => {
-  return <Bg bgimg={bgImg}>{children}</Bg>;
+  return (
+    <Div>
+      <Bg src={bgImg} />
+      {children}
+    </Div>
+  );
 };
 
-export default Background;
+export default React.memo(Background);

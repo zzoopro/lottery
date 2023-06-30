@@ -9,11 +9,11 @@ const Frame = styled.div<{ os: OS }>`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 450px;
-  height: ${(props) => (props.os !== "web" ? "100vh" : "800px")};
+  max-width: 430px;
+  height: ${(props) => (props.os !== "web" ? "max-content" : "800px")};
+  min-height: ${(props) => (props.os !== "web" ? "100vh" : "800px")};
   margin: ${(props) => (props.os !== "web" ? "auto" : "auto")};
   border-radius: ${(props) => (props.os === "web" ? "10px" : "0px")};
-  overflow: hidden;
 `;
 
 interface LayoutProps {

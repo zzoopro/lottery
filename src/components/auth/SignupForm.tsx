@@ -1,10 +1,34 @@
 import { styled } from "styled-components";
 import Input from "./Input";
-import { FormEvent, useCallback, useState } from "react";
 import * as API from "../../api/api";
+import { FieldValues, useForm } from "react-hook-form";
+import BigButton from "../common/UI/BigButton";
+import { useNavigate } from "react-router-dom";
 
-const Form = styled.form``;
-const Button = styled.button``;
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+`;
+
+const Label = styled.label`
+  color: #fff;
+  font-size: 20px;
+  font-family: Noto Sans Kr;
+  font-style: normal;
+  font-weight: 700;
+  margin-bottom: 10px;
+`;
+
+const ErrorText = styled.p`
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0px 5px;
+  color: #ff4343;
+  font-size: 16px;
+  font-family: Noto Sans Kr;
+`;
 
 export interface ISignup {
   userId: string;
@@ -15,29 +39,86 @@ export interface ISignup {
 }
 
 const SignupForm = () => {
-  const [signupForm, setSignupForm] = useState<ISignup>();
+  const navigate = useNavigate();
 
-  const validate = useCallback((form: ISignup): Promise<ISignup> => {
-    return new Promise((resolve, reject) => {
-      if (!form.nickname) return reject("닉네임을 입력하세요.");
-      if (!form.userId) return reject("아이디를 입력하세요.");
-      if (!form.password) return reject("비밀번호를 입력하세요.");
-      if (!form.phoneNumber) return reject("핸드폰 번호를 입력하세요.");
-      form["coin"] = 5;
-      return resolve(form);
-    });
-  }, []);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
 
-  const onSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    const data = await validate(signupForm!).then((form) =>
-      API.signup(signupForm!)
-    );
+  const onSubmit = (data: FieldValues) => {
+    navigate("/master/random-box");
   };
 
   return (
-    <Form onSubmit={onSubmit}>
-      <Button>회원가입</Button>
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <Label htmlFor="userId">아이디</Label>
+      <Input
+        id="userId"
+        placeholder="영문을 사용해 4 ~ 12자"
+        register={register("userId", {
+          required: true,
+          minLength: { value: 4, message: "최소 4글자를 입력해주세요." },
+          maxLength: {
+            value: 12,
+            message: "최대 12글자를 입력할 수 있습니다.",
+          },
+        })}
+      />
+      <ErrorText>{errors.userId?.message as any}</ErrorText>
+
+      <Label htmlFor="nickname">닉네임</Label>
+      <Input
+        id="nickname"
+        placeholder="한글, 영문을 사용해 최대 6자"
+        register={register("nickname", {
+          required: true,
+          minLength: { value: 2, message: "최소 2글자를 입력해주세요." },
+          maxLength: {
+            value: 6,
+            message: "최대 6글자를 입력할 수 있습니다.",
+          },
+        })}
+      />
+      <ErrorText>{errors.nickname?.message as any}</ErrorText>
+
+      <Label htmlFor="password">비밀번호</Label>
+      <Input
+        id="password"
+        type="password"
+        placeholder="영문, 숫자를 사용해 최대 4~12자"
+        register={register("password", {
+          required: true,
+          minLength: { value: 4, message: "최소 4글자를 입력해주세요." },
+          maxLength: {
+            value: 12,
+            message: "최대 12글자를 입력할 수 있습니다.",
+          },
+        })}
+      />
+      <ErrorText>{errors.password?.message as any}</ErrorText>
+
+      <Label htmlFor="phone">핸드폰 번호</Label>
+      <Input
+        id="phone"
+        type="number"
+        placeholder="(-) 를 제외"
+        register={register("phone", {
+          required: true,
+          minLength: {
+            value: 11,
+            message: "11자리 핸드폰번호를 입력해 주세요.",
+          },
+          maxLength: {
+            value: 11,
+            message: "11자리 핸드폰번호를 입력해 주세요.",
+          },
+        })}
+      />
+      <ErrorText>{errors.phone?.message as any}</ErrorText>
+      <BigButton style={{ marginTop: "30px" }}>회원가입</BigButton>
     </Form>
   );
 };

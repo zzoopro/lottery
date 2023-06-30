@@ -24,6 +24,7 @@ const Machine = styled(motion.div)`
   width: 350px;
   aspect-ratio: 1 / 1.2;
   background-color: #f1f1f1;
+  border: 1px solid #333;
   border-radius: 30px;
 `;
 const Item = styled(motion.div)<{ bgcolor: string }>`
