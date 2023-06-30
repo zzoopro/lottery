@@ -1,5 +1,5 @@
+import { ISignup } from "../components/auth/SignupForm";
 import { POST, USER } from "../utils/constants";
-import { ISignup } from "../utils/type";
 
 export const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 

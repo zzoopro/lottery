@@ -1,24 +1,14 @@
-import { ChangeEventHandler } from "react";
 import { styled } from "styled-components";
 
 const InputTag = styled.input``;
 
 interface InputProps {
-  type: "text" | "password" | "email";
+  register: any;
   placeholder?: string;
-  value: string;
-  onChange: ChangeEventHandler<HTMLInputElement>;
 }
 
-const Input = ({ type, placeholder, value, onChange }: InputProps) => {
-  return (
-    <InputTag
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-    />
-  );
+const Input = ({ register, placeholder }: InputProps) => {
+  return <InputTag placeholder={placeholder} {...register} />;
 };
 
 export default Input;

@@ -11,7 +11,7 @@ const Scafford = styled.div<{ os: OS }>`
   width: 100%;
   max-width: 450px;
   height: ${(props) => (props.os !== "web" ? "100vh" : "800px")};
-  margin: ${(props) => (props.os !== "web" ? "auto" : "15vh auto")};
+  margin: ${(props) => (props.os !== "web" ? "auto" : "auto")};
   background-color: #333;
   border-radius: ${(props) => (props.os === "web" ? "10px" : "0px")};
   overflow: hidden;

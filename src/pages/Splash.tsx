@@ -2,17 +2,7 @@ import { styled } from "styled-components";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/common/Layout";
-
-const Background = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  background-image: url("./images/splash-bg.jpg");
-  background-size: cover;
-`;
+import Background from "../components/common/Background";
 
 const Img = styled(motion.img)`
   -webkit-user-select: none;
@@ -99,7 +89,7 @@ const Splash = () => {
   const navigate = useNavigate();
   return (
     <Layout>
-      <Background>
+      <Background bgImg={"./images/bg-splash.jpg"}>
         <Star1
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -157,7 +147,7 @@ const Splash = () => {
           }}
           src="/images/capsule.png"
         />
-        <Button onClick={() => navigate("/signup")}>시작하기</Button>
+        <Button onClick={() => navigate("/login")}>시작하기</Button>
       </Background>
     </Layout>
   );
