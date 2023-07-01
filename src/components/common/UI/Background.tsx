@@ -1,33 +1,24 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { styled } from "styled-components";
 
-const Div = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-`;
-
-const Bg = styled.img`
+const Bg = styled.div<{ bgimg: string }>`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  z-index: -1;
-  object-fit: cover;
+  height: max-content;
+  min-height: 100%;
+  background-image: ${({ bgimg }) => `url(${bgimg})`};
+  background-size: cover;
 `;
 
 interface BackgroundProps {
   children: ReactNode;
   bgImg: string;
+  height?: string;
 }
 const Background = ({ children, bgImg }: BackgroundProps) => {
-  return (
-    <Div>
-      <Bg src={bgImg} />
-      {children}
-    </Div>
-  );
+  return <Bg bgimg={bgImg}>{children}</Bg>;
 };
 
 export default React.memo(Background);

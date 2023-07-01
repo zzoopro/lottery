@@ -93,7 +93,7 @@ const Splash = () => {
   const navigate = useNavigate();
   return (
     <Layout>
-      <Background bgImg={"./images/bg-splash.jpg"}>
+      <Background bgImg="./images/bg-splash.jpg">
         <Star1
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

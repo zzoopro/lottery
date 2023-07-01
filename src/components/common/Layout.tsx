@@ -4,16 +4,24 @@ import { useRecoilState } from "recoil";
 import { OS, osAtom } from "../../atom/atom";
 import { osCheck } from "../../utils/functions";
 
+const Root = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+`;
+
 const Frame = styled.div<{ os: OS }>`
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 430px;
-  height: ${(props) => (props.os !== "web" ? "max-content" : "800px")};
+  height: ${(props) => (props.os !== "web" ? "100vh" : "800px")};
   min-height: ${(props) => (props.os !== "web" ? "100vh" : "800px")};
-  margin: ${(props) => (props.os !== "web" ? "auto" : "auto")};
   border-radius: ${(props) => (props.os === "web" ? "10px" : "0px")};
+  overflow-y: scroll;
 `;
 
 interface LayoutProps {
@@ -31,7 +39,11 @@ const Layout = ({ children }: LayoutProps) => {
     return () => window.removeEventListener("resize", resize);
   }, [setOs, resize]);
 
-  return <Frame os={os}>{children}</Frame>;
+  return (
+    <Root>
+      <Frame os={os}>{children}</Frame>
+    </Root>
+  );
 };
 
 export default React.memo(Layout);

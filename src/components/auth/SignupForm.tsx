@@ -118,7 +118,7 @@ const SignupForm = () => {
         })}
       />
       <ErrorText>{errors.phone?.message as any}</ErrorText>
-      <BigButton style={{ marginTop: "30px" }}>회원가입</BigButton>
+      <BigButton style={{ marginBottom: "20px" }}>회원가입</BigButton>
     </Form>
   );
 };
