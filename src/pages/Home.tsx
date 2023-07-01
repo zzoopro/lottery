@@ -175,7 +175,7 @@ interface CapsuleStatus {
 
 const Home = () => {
   const navigate = useNavigate();
-  const { userType } = useParams();
+  const { userId } = useParams();
   const machineRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef<boolean>(false);
 
@@ -218,10 +218,14 @@ const Home = () => {
       },
     [setCapsule]
   );
-  const sealCapsule: MouseEventHandler = useCallback((event) => {
-    setCapsule({ isOpen: false, capsuleId: "" });
-    setLetterBgColor("");
-  }, []);
+  const goToReply: MouseEventHandler = useCallback(
+    (event) => {
+      setCapsule({ isOpen: false, capsuleId: "" });
+      setLetterBgColor("");
+      navigate("/master/random-box/1/reply");
+    },
+    [navigate]
+  );
 
   const onDragStart: DragEventHandlerType = useCallback((event, info) => {
     isDragging.current = true;
@@ -262,7 +266,7 @@ const Home = () => {
         <AnimatePresence>
           {capsule?.isOpen && (
             <Letter
-              // onClick={sealCapsule}
+              // onClick={goToReply}
               bgcolor={letterBgColor}
               variants={letterVariants}
               transition={{ type: "tween", duration: 0.2 }}
@@ -277,7 +281,7 @@ const Home = () => {
               <From>
                 <strong>From.</strong> 누군가
               </From>
-              <BigButton onClick={sealCapsule} style={{ marginTop: "20px" }}>
+              <BigButton onClick={goToReply} style={{ marginTop: "20px" }}>
                 답장하기
               </BigButton>
             </Letter>

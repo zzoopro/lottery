@@ -8,13 +8,14 @@ import Splash from "./pages/Splash";
 import PopupWrap from "./components/common/PopupWrap";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import Reply from "./pages/Replay";
 
 const router = createBrowserRouter([
   { path: "/", element: <Splash /> },
   { path: "/signup", element: <Signup /> },
   { path: "/login", element: <Login /> },
-  { path: "/:userType/random-box/", element: <Home /> },
-  { path: "/:userType/random-box/:letterId", element: <Home /> },
+  { path: "/:userId/random-box/", element: <Home /> },
+  { path: "/:userId/random-box/:capsuleId/reply", element: <Reply /> },
 ]);
 
 const Router = () => {
