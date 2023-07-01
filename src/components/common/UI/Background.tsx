@@ -13,7 +13,7 @@ const Bg = styled.div<{ bgimg: string }>`
 `;
 
 interface BackgroundProps {
-  children: ReactNode;
+  children: ReactNode | ReactNode[];
   bgImg: string;
   height?: string;
 }

@@ -18,14 +18,19 @@ import {
 import Layout from "../components/common/Layout";
 import { RandomColor } from "../utils/functions";
 import { useNavigate, useParams } from "react-router-dom";
+import Background from "../components/common/UI/Background";
 
 const Machine = styled(motion.div)`
-  position: relative;
-  width: 350px;
-  aspect-ratio: 1 / 1.2;
+  position: absolute;
+  top: 20.5%;
+  left: 50.5%;
+  transform: translateX(-50%);
+  width: 65%;
+  aspect-ratio: 1 / 1.01;
   background-color: #f1f1f1;
   border: 1px solid #333;
-  border-radius: 30px;
+  border-radius: 5px;
+  z-index: 3;
 `;
 const Item = styled(motion.div)<{ bgcolor: string }>`
   position: absolute;
@@ -38,6 +43,7 @@ const Item = styled(motion.div)<{ bgcolor: string }>`
   border-radius: 50%;
   aspect-ratio: 1 / 1;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.2);
+  border: 2px solid #263ca6;
 `;
 
 const LetterWrap = styled.div`
@@ -61,6 +67,23 @@ const Letter = styled(motion.div)<{ bgcolor: string }>`
   background-color: ${(props) => props.bgcolor};
   pointer-events: auto;
   z-index: 10;
+`;
+
+const RandomBox = styled.img`
+  position: absolute;
+  left: 50%;
+  top: 15%;
+  transform: translateX(-50%);
+  object-fit: contain;
+  width: 80%;
+  z-index: 2;
+`;
+
+const CapsuleLight = styled.img`
+  position: absolute;
+  left: 10%;
+  top: 10%;
+  width: 30%;
 `;
 
 const items = Array.from({ length: 10 })
@@ -148,38 +171,43 @@ const Home = () => {
 
   return (
     <Layout>
-      <Machine ref={machineRef}>
-        {items.map((item, i) => (
-          <Item
-            key={i}
-            onClick={onClick(String(item.value))}
-            drag
-            onDragStart={onDragStart as any}
-            onDragEnd={onDragEnd as any}
-            dragConstraints={machineRef}
-            dragElastic={0}
-            bgcolor={item.bgColor}
-            whileTap={{ scale: 1.2, zIndex: 2 }}
-            whileDrag={{ scale: 1.2, zIndex: 2 }}
-            dragControls={controls}
-          ></Item>
-        ))}
-      </Machine>
-      <LetterWrap>
-        <AnimatePresence>
-          {letterId && (
-            <Letter
-              onClick={closeLetter}
-              bgcolor={letterBgColor}
-              variants={letterVariants}
-              transition={{ type: "tween", duration: 0.2 }}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-            />
-          )}
-        </AnimatePresence>
-      </LetterWrap>
+      <Background bgImg="/images/bg-random-box.jpg">
+        <RandomBox src="/images/random-box.png" />
+        <Machine ref={machineRef}>
+          {items.map((item, i) => (
+            <Item
+              key={i}
+              onClick={onClick(String(item.value))}
+              drag
+              onDragStart={onDragStart as any}
+              onDragEnd={onDragEnd as any}
+              dragConstraints={machineRef}
+              dragElastic={0}
+              bgcolor={item.bgColor}
+              whileTap={{ scale: 1.2, zIndex: 2 }}
+              whileDrag={{ scale: 1.2, zIndex: 2 }}
+              dragControls={controls}
+            >
+              <CapsuleLight src="/images/capsule-light.png" />
+            </Item>
+          ))}
+        </Machine>
+        <LetterWrap>
+          <AnimatePresence>
+            {letterId && (
+              <Letter
+                onClick={closeLetter}
+                bgcolor={letterBgColor}
+                variants={letterVariants}
+                transition={{ type: "tween", duration: 0.2 }}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              />
+            )}
+          </AnimatePresence>
+        </LetterWrap>
+      </Background>
     </Layout>
   );
 };
