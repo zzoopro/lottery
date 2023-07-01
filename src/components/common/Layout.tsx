@@ -21,7 +21,7 @@ const Frame = styled.div<{ os: OS }>`
   height: ${(props) => (props.os !== "web" ? "100vh" : "800px")};
   min-height: ${(props) => (props.os !== "web" ? "100vh" : "800px")};
   border-radius: ${(props) => (props.os === "web" ? "10px" : "0px")};
-  overflow-y: scroll;
+  overflow: auto;
 `;
 
 interface LayoutProps {
