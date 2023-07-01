@@ -49,7 +49,10 @@ const SignupForm = () => {
   } = useForm();
 
   const onSubmit = (data: FieldValues) => {
-    navigate("/master/random-box");
+    data["coin"] = 5;
+    API.signup(data as ISignup).then((res) => {
+      navigate("/master/random-box");
+    });
   };
 
   return (
@@ -100,12 +103,12 @@ const SignupForm = () => {
       />
       <ErrorText>{errors.password?.message as any}</ErrorText>
 
-      <Label htmlFor="phone">핸드폰 번호</Label>
+      <Label htmlFor="phoneNumber">핸드폰 번호</Label>
       <Input
-        id="phone"
+        id="phoneNumber"
         type="number"
         placeholder="(-) 를 제외"
-        register={register("phone", {
+        register={register("phoneNumber", {
           required: true,
           minLength: {
             value: 11,
