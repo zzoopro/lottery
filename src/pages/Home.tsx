@@ -17,8 +17,16 @@ import {
 } from "react";
 import Layout from "../components/common/Layout";
 import { RandomColor } from "../utils/functions";
-import { useNavigate, useParams } from "react-router-dom";
+import { Form, useNavigate, useParams } from "react-router-dom";
 import Background from "../components/common/UI/Background";
+import BigButton from "../components/common/UI/BigButton";
+
+const Img = styled.img`
+  user-select: none;
+  -moz-user-select: none; /* Firefox */
+  -webkit-user-select: none; /* Safari 및 Chrome */
+  -ms-user-select: none; /* IE 10+ */
+`;
 
 const Machine = styled(motion.div)`
   position: absolute;
@@ -46,30 +54,7 @@ const Item = styled(motion.div)<{ bgcolor: string }>`
   border: 2px solid #263ca6;
 `;
 
-const LetterWrap = styled.div`
-  position: fixed;
-  top: 100px;
-  width: 300px;
-  aspect-ratio: 1 / 1.2;
-  overflow: hidden;
-  pointer-events: none;
-`;
-
-const Letter = styled(motion.div)<{ bgcolor: string }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  max-width: 300px;
-  width: 300px;
-  aspect-ratio: 1 / 1.2;
-  background-color: ${(props) => props.bgcolor};
-  pointer-events: auto;
-  z-index: 10;
-`;
-
-const RandomBox = styled.img`
+const RandomBox = styled(Img)`
   position: absolute;
   left: 50%;
   top: 15%;
@@ -77,13 +62,86 @@ const RandomBox = styled.img`
   object-fit: contain;
   width: 80%;
   z-index: 2;
+  pointer-events: none;
 `;
-
-const CapsuleLight = styled.img`
+const CapsuleLight = styled(Img)`
   position: absolute;
   left: 10%;
   top: 10%;
   width: 30%;
+  pointer-events: none;
+`;
+const RandomBoxButton = styled(Img)`
+  position: absolute;
+  left: 50%;
+  top: 61.5%;
+  width: 70px;
+  transform: translateX(-50%);
+  object-fit: contain;
+  z-index: 5;
+  cursor: pointer;
+`;
+
+const Message = styled.textarea`
+  display: flex;
+  width: 100%;
+  height: 80%;
+  flex-shrink: 0;
+
+  padding: 25px;
+  border-radius: 20px;
+  border: 1px solid var(--unnamed, #c6c6c6);
+  background: var(--unnamed, rgba(255, 255, 255, 0.14));
+  margin: 20px 0px;
+
+  color: rgba(51, 51, 51, 0.4);
+  font-size: 20px;
+  font-family: Noto Sans Kr;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 167.023%;
+`;
+const To = styled.h3`
+  color: black;
+  font-family: Noto Sans Kr;
+  font-weight: 700;
+  align-self: flex-start;
+  font-size: 20px;
+  font-style: normal;
+  strong {
+    color: #5571ee;
+  }
+`;
+const From = styled.h3`
+  font-family: Noto Sans Kr;
+  color: black;
+  font-weight: 700;
+  align-self: flex-end;
+  font-size: 20px;
+  font-style: normal;
+  strong {
+    color: #5571ee;
+  }
+`;
+
+const Letter = styled(motion.div)<{ bgcolor: string }>`
+  position: absolute;
+  width: 90%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20%;
+  transform: translateX(-50%);
+  aspect-ratio: 1 / 1.5;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid #030138;
+  background: #fff;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
+  pointer-events: auto;
+  border-radius: 20px;
+  z-index: 90;
 `;
 
 const items = Array.from({ length: 10 })
@@ -110,12 +168,18 @@ const letterVariants: Variants = {
   },
 };
 
+interface CapsuleStatus {
+  isOpen: boolean;
+  capsuleId: string;
+}
+
 const Home = () => {
   const navigate = useNavigate();
-  const { userType, letterId } = useParams();
+  const { userType } = useParams();
   const machineRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef<boolean>(false);
 
+  const [capsule, setCapsule] = useState<CapsuleStatus>();
   const [letterBgColor, setLetterBgColor] = useState<string>("");
   const controls = useDragControls();
 
@@ -142,25 +206,22 @@ const Home = () => {
     }
   }, []);
 
-  const onClick = useCallback(
-    (letterId: string): MouseEventHandler & TouchEventHandler =>
+  const openCapsule = useCallback(
+    (capsuleId: string): MouseEventHandler & TouchEventHandler =>
       (event) => {
         if (isDragging.current) return;
-        navigate(`/${userType}/random-box/${letterId}`);
+        setCapsule({ isOpen: true, capsuleId: String(capsuleId) });
         const backgroundColor = window.getComputedStyle(
           event.target as Element
         ).backgroundColor;
         setLetterBgColor(backgroundColor);
       },
-    [navigate, userType]
+    [setCapsule]
   );
-  const closeLetter: MouseEventHandler = useCallback(
-    (event) => {
-      navigate(`/${userType}/random-box`);
-      setLetterBgColor("");
-    },
-    [navigate, userType]
-  );
+  const sealCapsule: MouseEventHandler = useCallback((event) => {
+    setCapsule({ isOpen: false, capsuleId: "" });
+    setLetterBgColor("");
+  }, []);
 
   const onDragStart: DragEventHandlerType = useCallback((event, info) => {
     isDragging.current = true;
@@ -173,11 +234,16 @@ const Home = () => {
     <Layout>
       <Background bgImg="/images/bg-random-box.jpg">
         <RandomBox src="/images/random-box.png" />
+        <RandomBoxButton
+          draggable={false}
+          src="/images/random-box-button.png"
+          onClick={openCapsule("1")}
+        />
         <Machine ref={machineRef}>
           {items.map((item, i) => (
             <Item
               key={i}
-              onClick={onClick(String(item.value))}
+              onClick={openCapsule(String(item.value))}
               drag
               onDragStart={onDragStart as any}
               onDragEnd={onDragEnd as any}
@@ -192,21 +258,31 @@ const Home = () => {
             </Item>
           ))}
         </Machine>
-        <LetterWrap>
-          <AnimatePresence>
-            {letterId && (
-              <Letter
-                onClick={closeLetter}
-                bgcolor={letterBgColor}
-                variants={letterVariants}
-                transition={{ type: "tween", duration: 0.2 }}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-              />
-            )}
-          </AnimatePresence>
-        </LetterWrap>
+
+        <AnimatePresence>
+          {capsule?.isOpen && (
+            <Letter
+              // onClick={sealCapsule}
+              bgcolor={letterBgColor}
+              variants={letterVariants}
+              transition={{ type: "tween", duration: 0.2 }}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <To>
+                <strong>To.</strong> 익주
+              </To>
+              <Message></Message>
+              <From>
+                <strong>From.</strong> 누군가
+              </From>
+              <BigButton onClick={sealCapsule} style={{ marginTop: "20px" }}>
+                답장하기
+              </BigButton>
+            </Letter>
+          )}
+        </AnimatePresence>
       </Background>
     </Layout>
   );

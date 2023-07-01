@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { MouseEventHandler, ReactNode } from "react";
 import { styled } from "styled-components";
 import { Struct } from "../../../utils/type";
 
@@ -12,6 +12,7 @@ const Button = styled.button`
   border-radius: 20px;
   background-color: #5571ee;
 
+  cursor: pointer;
   color: var(--white, #fff);
   text-align: center;
   font-size: 24px;
@@ -23,10 +24,15 @@ const Button = styled.button`
 
 interface BigButtonProps {
   children: ReactNode;
+  onClick?: MouseEventHandler;
   style?: Struct<any>;
 }
-const BigButton = ({ children, style }: BigButtonProps) => {
-  return <Button style={style}>{children}</Button>;
+const BigButton = ({ children, style, onClick }: BigButtonProps) => {
+  return (
+    <Button style={style} onClick={onClick}>
+      {children}
+    </Button>
+  );
 };
 
 export default BigButton;
