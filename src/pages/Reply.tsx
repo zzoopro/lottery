@@ -1,9 +1,10 @@
+import Header from "../components/common/Header";
 import Layout from "../components/common/Layout";
 
 const Reply = () => {
   return (
     <Layout bgColor="dark">
-      <h1>답장하기</h1>
+      <Header goBack title="답장하기" />
     </Layout>
   );
 };

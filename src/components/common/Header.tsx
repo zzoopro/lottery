@@ -1,21 +1,56 @@
 import React from "react";
 import { styled } from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 const HeaderTag = styled.header`
+  position: relative;
   display: flex;
-  height: 50px;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
+  width: 100%;
 `;
 
-const Title = styled.h2``;
+const GoBackButton = styled.div`
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+`;
+const GoBack = styled(FontAwesomeIcon)`
+  display: block;
+  color: #fff;
+  height: 28px;
+`;
+const Title = styled.h2`
+  justify-self: center;
+  color: #fff;
+  font-size: 22px;
+  font-family: Noto Sans Kr;
+  font-style: normal;
+  font-weight: 500;
+`;
 
 interface HeaderProps {
   title: string;
+  goBack: boolean;
 }
 
-const Header = ({ title }: HeaderProps) => {
+const Header = ({ title, goBack = true }: HeaderProps) => {
+  const navigate = useNavigate();
   return (
     <HeaderTag>
-      {/* <FontAwesomeIcon icon={faAngleLeft} /> */}
+      {goBack && (
+        <GoBackButton onClick={() => navigate(-1)}>
+          <GoBack icon={faAngleLeft} />
+        </GoBackButton>
+      )}
       <Title>{title}</Title>
     </HeaderTag>
   );

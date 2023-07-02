@@ -8,7 +8,7 @@ import Splash from "./pages/Splash";
 import PopupWrap from "./components/common/PopupWrap";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
-import Reply from "./pages/Replay";
+import Reply from "./pages/Reply";
 
 const router = createBrowserRouter([
   { path: "/", element: <Splash /> },
