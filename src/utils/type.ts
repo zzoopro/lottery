@@ -4,3 +4,4 @@ export type Struct<T> = {
 };
 export type Direction = "row" | "column";
 export type InputType = "text" | "password" | "email" | "number";
+export type CapsuleOpenType = "random" | "choice";

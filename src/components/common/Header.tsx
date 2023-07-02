@@ -1,23 +1,22 @@
 import React from "react";
 import { styled } from "styled-components";
-import { IPopup, popupAtom } from "../../atom/atom";
-import { useSetRecoilState } from "recoil";
 
 const HeaderTag = styled.header`
+  display: flex;
   height: 50px;
 `;
 
-const Header = () => {
-  const setPopup = useSetRecoilState(popupAtom);
+const Title = styled.h2``;
+
+interface HeaderProps {
+  title: string;
+}
+
+const Header = ({ title }: HeaderProps) => {
   return (
     <HeaderTag>
-      <h1
-        onClick={() =>
-          setPopup((popup: IPopup) => ({ ...popup, isShow: true }))
-        }
-      >
-        뽑기통 장수
-      </h1>
+      {/* <FontAwesomeIcon icon={faAngleLeft} /> */}
+      <Title>{title}</Title>
     </HeaderTag>
   );
 };

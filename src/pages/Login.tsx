@@ -40,21 +40,25 @@ const LinkTo = styled(Link)`
 const Login = () => {
   return (
     <Layout bgColor="dark">
-      <Scaffold>
-        <Box h="60px" />
-        <Logo width="70%" />
-        <Em>누가 나한테 편지를 썼을까?</Em>
-        <LoginForm />
-        <FlexBox
-          direction="row"
-          style={{
-            justifyContent: "space-between",
-            marginTop: "10px",
-            padding: "0px 10px",
-          }}
-        >
-          <Span>편지를 받아보고 싶나요?</Span>
-          <LinkTo to="/signup">회원가입</LinkTo>
+      <Scaffold style={{ justifyContent: "space-between" }}>
+        <FlexBox direction="column" style={{ marginTop: "5vh" }}>
+          <Logo width="70%" />
+          <Em>누가 나한테 편지를 썼을까?</Em>
+        </FlexBox>
+
+        <FlexBox direction="column">
+          <LoginForm />
+          <FlexBox
+            direction="row"
+            style={{
+              justifyContent: "space-between",
+              marginTop: "20px",
+              padding: "0px 10px",
+            }}
+          >
+            <Span>편지를 받아보고 싶나요?</Span>
+            <LinkTo to="/signup">회원가입</LinkTo>
+          </FlexBox>
         </FlexBox>
       </Scaffold>
     </Layout>

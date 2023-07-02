@@ -21,6 +21,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import BigButton from "../components/common/UI/BigButton";
 import { useRecoilState } from "recoil";
 import { IPopup, popupAtom, showPopup } from "../atom/atom";
+import { CapsuleOpenType } from "../utils/type";
+import FlexBox from "../components/common/UI/FlexBox";
 
 const Img = styled.img`
   user-select: none;
@@ -72,12 +74,9 @@ const CapsuleLight = styled(Img)`
   width: 30%;
   pointer-events: none;
 `;
-const CapsuleBoxButton = styled(Img)`
+const RandomButton = styled(motion(Img))`
   position: absolute;
-  left: 50%;
-  top: 61.5%;
   width: 70px;
-  transform: translateX(-50%);
   object-fit: contain;
   z-index: 5;
   cursor: pointer;
@@ -169,6 +168,19 @@ const letterVariants: Variants = {
   },
 };
 
+const randomButtonVariants: Variants = {
+  initial: {
+    scale: 1,
+    left: "50%",
+    top: "50%",
+  },
+  animate: {
+    scale: [1, 1.2, 1],
+    left: "50%",
+    top: "50%",
+  },
+};
+
 interface CapsuleStatus {
   isOpen: boolean;
   capsuleId: string;
@@ -213,11 +225,16 @@ const Home = () => {
     const backgroundColor = window.getComputedStyle(el).backgroundColor;
     setLetterBgColor(backgroundColor);
   }, []);
-  console.log(popup);
+
   const onCapsuleClick = useCallback(
-    (capsuleId: string): MouseEventHandler & TouchEventHandler =>
+    (
+        capsuleId: string,
+        openType: CapsuleOpenType
+      ): MouseEventHandler & TouchEventHandler =>
       (event) => {
         if (isDragging.current) return;
+        if (openType === "random")
+          return openCapsule(event.target as Element, capsuleId);
         setPopup(
           showPopup({
             content: "코인 2개가 소진돼요!\n선택한 편지를 읽어볼까요?",
@@ -250,16 +267,29 @@ const Home = () => {
   return (
     <Layout bgColor="blue">
       <CapsuleBox src="/images/capsule-box.png" />
-      <CapsuleBoxButton
-        draggable={false}
-        src="/images/capsule-box-button.png"
-        onClick={onCapsuleClick("1")}
-      />
+      <FlexBox
+        direction="row"
+        style={{
+          position: "absolute",
+          top: "65%",
+          justifyContent: "center",
+        }}
+      >
+        <RandomButton
+          draggable={false}
+          initial={{ scale: 1 }}
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ repeat: Infinity, repeatDelay: 0.5, duration: 0.2 }}
+          src="/images/capsule-box-button.png"
+          onClick={onCapsuleClick("1", "random")}
+        />
+      </FlexBox>
+
       <Machine ref={machineRef}>
         {items.map((item, i) => (
           <Item
             key={i}
-            onClick={onCapsuleClick(String(item.value))}
+            onClick={onCapsuleClick(String(item.value), "choice")}
             drag
             onDragStart={onDragStart as any}
             onDragEnd={onDragEnd as any}
@@ -278,7 +308,6 @@ const Home = () => {
       <AnimatePresence>
         {capsule?.isOpen && (
           <Letter
-            // onClick={goToReply}
             bgcolor={letterBgColor}
             variants={letterVariants}
             transition={{ type: "tween", duration: 0.2 }}

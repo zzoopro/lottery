@@ -9,13 +9,12 @@ import { AUTH } from "../../utils/constants";
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
 `;
 
 const ErrorText = styled.p`
   display: flex;
   align-items: center;
-  height: 40px;
+  height: 30px;
   padding: 0px 5px;
   color: #ff4343;
   font-size: 16px;
@@ -74,7 +73,7 @@ const LoginForm = () => {
         })}
       />
       <ErrorText>{errors.password?.message as any}</ErrorText>
-      <BigButton style={{ marginTop: "30px" }}>로그인</BigButton>
+      <BigButton>로그인</BigButton>
     </Form>
   );
 };
