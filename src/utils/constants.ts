@@ -17,6 +17,9 @@ export const hexArray = [
   "F",
 ];
 
+export const AUTH = "auth";
+export const AUTH_TOKEN = localStorage.getItem(AUTH);
+
 // API
 export const POST = "POST";
 export const GET = "GET";

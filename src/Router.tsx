@@ -14,8 +14,11 @@ const router = createBrowserRouter([
   { path: "/", element: <Splash /> },
   { path: "/signup", element: <Signup /> },
   { path: "/login", element: <Login /> },
-  { path: "/:userId/random-box/", element: <Home /> },
-  { path: "/:userId/random-box/:capsuleId/reply", element: <Reply /> },
+  { path: "/:userType/capsule-box/:jarId", element: <Home /> },
+  {
+    path: "/:userType/capsule-box/:jarId/:capsuleId/reply",
+    element: <Reply />,
+  },
 ]);
 
 const Router = () => {

@@ -34,6 +34,14 @@ export const popupAtom = atom<IPopup>({
   default: INIT_POPUP, // default value (aka initial value)
 });
 
+export const showPopup = (popupData: Partial<IPopup>) => {
+  return (popup: IPopup): IPopup => ({ ...popup, isShow: true, ...popupData });
+};
+
+export const closePopup = () => {
+  return INIT_POPUP;
+};
+
 export const loadingAtom = atom<boolean>({
   key: "loading",
   default: false,

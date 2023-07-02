@@ -13,7 +13,8 @@ const PopupContainer = styled.div`
   align-items: center;
   width: 100vw;
   height: 100vh;
-  z-index: -1;
+  z-index: 99;
+  pointer-events: none;
 `;
 
 const PopupWrap = () => {
@@ -24,13 +25,12 @@ const PopupWrap = () => {
       {popup.isShow && popup.withDimmed && (
         <Dimmed>{popup.element ? popup.element : <DefaultPopup />}</Dimmed>
       )}
-      <PopupContainer>
-        {popup.isShow && !popup.withDimmed && popup.element ? (
-          popup.element
-        ) : (
-          <DefaultPopup />
-        )}
-      </PopupContainer>
+
+      {popup.isShow && !popup.withDimmed && popup.element ? (
+        popup.element
+      ) : (
+        <DefaultPopup />
+      )}
     </>
   );
 };

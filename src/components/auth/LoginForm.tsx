@@ -4,6 +4,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import BigButton from "../common/UI/BigButton";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../api/api";
+import { AUTH } from "../../utils/constants";
 
 const Form = styled.form`
   display: flex;
@@ -26,6 +27,11 @@ export interface ILogin {
   password: string;
 }
 
+interface LoginResponse {
+  jarId: string;
+  token: string;
+}
+
 const LoginForm = () => {
   const navigate = useNavigate();
   const {
@@ -36,7 +42,9 @@ const LoginForm = () => {
   } = useForm();
 
   const onSubmit = async (data: FieldValues) => {
-    login(data as ILogin).then((res) => console.log(res));
+    const { token, jarId }: LoginResponse = await login(data as ILogin);
+    localStorage.setItem(AUTH, token);
+    navigate(`/master/capsule-box/${jarId}`);
   };
 
   return (

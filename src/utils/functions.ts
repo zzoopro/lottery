@@ -18,3 +18,15 @@ export function osCheck(): OS {
   //   navigator.userAgent
   // );
 }
+
+export function isExist(data: any): boolean {
+  if (!data) return false;
+  if (data === "") return false;
+  return true;
+}
+
+export function isEmpty(data: any): boolean {
+  if (!data) return true;
+  if (data === "") return true;
+  return false;
+}

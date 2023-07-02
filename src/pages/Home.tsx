@@ -17,8 +17,10 @@ import {
 } from "react";
 import Layout from "../components/common/Layout";
 import { RandomColor } from "../utils/functions";
-import { Form, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import BigButton from "../components/common/UI/BigButton";
+import { useRecoilState } from "recoil";
+import { IPopup, popupAtom, showPopup } from "../atom/atom";
 
 const Img = styled.img`
   user-select: none;
@@ -53,7 +55,7 @@ const Item = styled(motion.div)<{ bgcolor: string }>`
   border: 2px solid #263ca6;
 `;
 
-const RandomBox = styled(Img)`
+const CapsuleBox = styled(Img)`
   position: absolute;
   left: 50%;
   top: 15%;
@@ -70,7 +72,7 @@ const CapsuleLight = styled(Img)`
   width: 30%;
   pointer-events: none;
 `;
-const RandomBoxButton = styled(Img)`
+const CapsuleBoxButton = styled(Img)`
   position: absolute;
   left: 50%;
   top: 61.5%;
@@ -174,7 +176,8 @@ interface CapsuleStatus {
 
 const Home = () => {
   const navigate = useNavigate();
-  const { userId } = useParams();
+  const { userType, jarId } = useParams();
+  const [popup, setPopup] = useRecoilState(popupAtom);
   const machineRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef<boolean>(false);
 
@@ -205,25 +208,36 @@ const Home = () => {
     }
   }, []);
 
-  const openCapsule = useCallback(
+  const openCapsule = useCallback((el: Element, capsuleId: string) => {
+    setCapsule({ isOpen: true, capsuleId: String(capsuleId) });
+    const backgroundColor = window.getComputedStyle(el).backgroundColor;
+    setLetterBgColor(backgroundColor);
+  }, []);
+  console.log(popup);
+  const onCapsuleClick = useCallback(
     (capsuleId: string): MouseEventHandler & TouchEventHandler =>
       (event) => {
         if (isDragging.current) return;
-        setCapsule({ isOpen: true, capsuleId: String(capsuleId) });
-        const backgroundColor = window.getComputedStyle(
-          event.target as Element
-        ).backgroundColor;
-        setLetterBgColor(backgroundColor);
+        setPopup(
+          showPopup({
+            content: "코인 2개가 소진돼요!\n선택한 편지를 읽어볼까요?",
+            numberOfButton: 2,
+            confirmText: "읽을래요",
+            rejectText: "아니요",
+            onConfirm: () => openCapsule(event.target as Element, capsuleId),
+          })
+        );
       },
-    [setCapsule]
+    [openCapsule, setPopup]
   );
+
   const goToReply: MouseEventHandler = useCallback(
     (event) => {
       setCapsule({ isOpen: false, capsuleId: "" });
       setLetterBgColor("");
-      navigate("/master/random-box/1/reply");
+      navigate(`/${userType}/capsule-box/${jarId}/${capsule?.capsuleId}/reply`);
     },
-    [navigate]
+    [navigate, jarId, userType, capsule]
   );
 
   const onDragStart: DragEventHandlerType = useCallback((event, info) => {
@@ -235,17 +249,17 @@ const Home = () => {
 
   return (
     <Layout bgColor="blue">
-      <RandomBox src="/images/random-box.png" />
-      <RandomBoxButton
+      <CapsuleBox src="/images/capsule-box.png" />
+      <CapsuleBoxButton
         draggable={false}
-        src="/images/random-box-button.png"
-        onClick={openCapsule("1")}
+        src="/images/capsule-box-button.png"
+        onClick={onCapsuleClick("1")}
       />
       <Machine ref={machineRef}>
         {items.map((item, i) => (
           <Item
             key={i}
-            onClick={openCapsule(String(item.value))}
+            onClick={onCapsuleClick(String(item.value))}
             drag
             onDragStart={onDragStart as any}
             onDragEnd={onDragEnd as any}
