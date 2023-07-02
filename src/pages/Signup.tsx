@@ -1,7 +1,6 @@
 import { styled } from "styled-components";
 import SignupForm from "../components/auth/SignupForm";
 import Layout from "../components/common/Layout";
-import Background from "../components/common/UI/Background";
 import Logo from "../components/common/UI/Logo";
 import Scafford from "../components/common/UI/Scaffold";
 import { Link } from "react-router-dom";
@@ -37,14 +36,12 @@ const LinkTo = styled(Link)`
 
 const Signup = () => {
   return (
-    <Layout>
-      <Background bgImg="./images/bg-signup.jpg">
-        <Scafford>
-          <Logo width="70%" />
-          <Em>나만의 뽑기통을 만들어 보세요!</Em>
-          <SignupForm />
-        </Scafford>
-      </Background>
+    <Layout bgColor="dark">
+      <Scafford>
+        <Logo width="70%" />
+        <Em>나만의 뽑기통을 만들어 보세요!</Em>
+        <SignupForm />
+      </Scafford>
     </Layout>
   );
 };

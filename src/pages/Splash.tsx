@@ -2,7 +2,6 @@ import { styled } from "styled-components";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/common/Layout";
-import Background from "../components/common/UI/Background";
 
 const Img = styled(motion.img)`
   -webkit-user-select: none;
@@ -92,55 +91,53 @@ const Button = styled.div`
 const Splash = () => {
   const navigate = useNavigate();
   return (
-    <Layout>
-      <Background bgImg="./images/bg-splash.jpg">
-        <Star1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ repeat: Infinity, repeatDelay: 0.2, duration: 0.2 }}
-          src="/images/star-1.png"
-        />
-        <Star2
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ repeat: Infinity, duration: 0.4 }}
-          src="/images/star-2.png"
-        />
-        <Star3
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ repeat: Infinity, duration: 0.3 }}
-          src="/images/star-3.png"
-        />
-        <Star4
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ repeat: Infinity, duration: 0.15 }}
-          src="/images/star-4.png"
-        />
-        <Star5
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ repeat: Infinity, duration: 0.25 }}
-          src="/images/star-4.png"
-        />
-        <Logo src="/images/logo.png" />
-        <Capsule
-          initial={{
-            y: 0,
-          }}
-          animate={{
-            y: [0, 15, 0],
-          }}
-          transition={{ repeat: Infinity, repeatDelay: 2, duration: 0.4 }}
-          whileTap={{
-            scale: 1.2,
-            rotate: 720,
-          }}
-          src="/images/capsule.png"
-        />
-        <Button onClick={() => navigate("/login")}>시작하기</Button>
-      </Background>
+    <Layout bgColor="dark">
+      <Star1
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ repeat: Infinity, repeatDelay: 0.2, duration: 0.2 }}
+        src="/images/star-1.png"
+      />
+      <Star2
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ repeat: Infinity, duration: 0.4 }}
+        src="/images/star-2.png"
+      />
+      <Star3
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ repeat: Infinity, duration: 0.3 }}
+        src="/images/star-3.png"
+      />
+      <Star4
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ repeat: Infinity, duration: 0.15 }}
+        src="/images/star-4.png"
+      />
+      <Star5
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ repeat: Infinity, duration: 0.25 }}
+        src="/images/star-4.png"
+      />
+      <Logo src="/images/logo.png" />
+      <Capsule
+        initial={{
+          y: 0,
+        }}
+        animate={{
+          y: [0, 15, 0],
+        }}
+        transition={{ repeat: Infinity, repeatDelay: 2, duration: 0.4 }}
+        whileTap={{
+          scale: 1.2,
+          rotate: 720,
+        }}
+        src="/images/capsule.png"
+      />
+      <Button onClick={() => navigate("/login")}>시작하기</Button>
     </Layout>
   );
 };

@@ -1,3 +1,4 @@
+import { ILogin } from "../components/auth/LoginForm";
 import { ISignup } from "../components/auth/SignupForm";
 import { POST, USER } from "../utils/constants";
 
@@ -12,7 +13,17 @@ const getHeaders = () => {
 };
 
 export const signup = async (data: ISignup) => {
-  return await fetch(`${SERVER_URL}${USER}`, {
+  return await fetch(`${SERVER_URL}/${USER}`, {
+    method: POST,
+    body: JSON.stringify(data),
+    headers: getHeaders(),
+  })
+    .then((response: Response) => response.json())
+    .catch((error: Error) => handleError(error));
+};
+
+export const login = async (data: ILogin) => {
+  return await fetch(`${SERVER_URL}/${USER}/login`, {
     method: POST,
     body: JSON.stringify(data),
     headers: getHeaders(),

@@ -18,7 +18,6 @@ import {
 import Layout from "../components/common/Layout";
 import { RandomColor } from "../utils/functions";
 import { Form, useNavigate, useParams } from "react-router-dom";
-import Background from "../components/common/UI/Background";
 import BigButton from "../components/common/UI/BigButton";
 
 const Img = styled.img`
@@ -235,59 +234,57 @@ const Home = () => {
   }, []);
 
   return (
-    <Layout>
-      <Background bgImg="/images/bg-random-box.jpg">
-        <RandomBox src="/images/random-box.png" />
-        <RandomBoxButton
-          draggable={false}
-          src="/images/random-box-button.png"
-          onClick={openCapsule("1")}
-        />
-        <Machine ref={machineRef}>
-          {items.map((item, i) => (
-            <Item
-              key={i}
-              onClick={openCapsule(String(item.value))}
-              drag
-              onDragStart={onDragStart as any}
-              onDragEnd={onDragEnd as any}
-              dragConstraints={machineRef}
-              dragElastic={0}
-              bgcolor={item.bgColor}
-              whileTap={{ scale: 1.2, zIndex: 2 }}
-              whileDrag={{ scale: 1.2, zIndex: 2 }}
-              dragControls={controls}
-            >
-              <CapsuleLight src="/images/capsule-light.png" />
-            </Item>
-          ))}
-        </Machine>
+    <Layout bgColor="blue">
+      <RandomBox src="/images/random-box.png" />
+      <RandomBoxButton
+        draggable={false}
+        src="/images/random-box-button.png"
+        onClick={openCapsule("1")}
+      />
+      <Machine ref={machineRef}>
+        {items.map((item, i) => (
+          <Item
+            key={i}
+            onClick={openCapsule(String(item.value))}
+            drag
+            onDragStart={onDragStart as any}
+            onDragEnd={onDragEnd as any}
+            dragConstraints={machineRef}
+            dragElastic={0}
+            bgcolor={item.bgColor}
+            whileTap={{ scale: 1.2, zIndex: 2 }}
+            whileDrag={{ scale: 1.2, zIndex: 2 }}
+            dragControls={controls}
+          >
+            <CapsuleLight src="/images/capsule-light.png" />
+          </Item>
+        ))}
+      </Machine>
 
-        <AnimatePresence>
-          {capsule?.isOpen && (
-            <Letter
-              // onClick={goToReply}
-              bgcolor={letterBgColor}
-              variants={letterVariants}
-              transition={{ type: "tween", duration: 0.2 }}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-            >
-              <To>
-                <strong>To.</strong> 익주
-              </To>
-              <Message></Message>
-              <From>
-                <strong>From.</strong> 누군가
-              </From>
-              <BigButton onClick={goToReply} style={{ marginTop: "20px" }}>
-                답장하기
-              </BigButton>
-            </Letter>
-          )}
-        </AnimatePresence>
-      </Background>
+      <AnimatePresence>
+        {capsule?.isOpen && (
+          <Letter
+            // onClick={goToReply}
+            bgcolor={letterBgColor}
+            variants={letterVariants}
+            transition={{ type: "tween", duration: 0.2 }}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <To>
+              <strong>To.</strong> 익주
+            </To>
+            <Message></Message>
+            <From>
+              <strong>From.</strong> 누군가
+            </From>
+            <BigButton onClick={goToReply} style={{ marginTop: "20px" }}>
+              답장하기
+            </BigButton>
+          </Letter>
+        )}
+      </AnimatePresence>
     </Layout>
   );
 };

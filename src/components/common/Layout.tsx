@@ -4,6 +4,19 @@ import { useRecoilState } from "recoil";
 import { OS, osAtom } from "../../atom/atom";
 import { osCheck } from "../../utils/functions";
 
+const makeBgColor = (bgColor: BgColor) => {
+  switch (bgColor) {
+    case "dark":
+      return "#1A1A1D";
+    case "blue":
+      return "#208DC0";
+    default:
+      return "#fff";
+  }
+};
+
+export type BgColor = "dark" | "blue";
+
 const Root = styled.div`
   display: flex;
   justify-content: center;
@@ -12,22 +25,24 @@ const Root = styled.div`
   height: 100vh;
 `;
 
-const Frame = styled.div<{ os: OS }>`
+const Frame = styled.div<{ os: OS; bgcolor: BgColor }>`
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 430px;
-  height: ${(props) => (props.os !== "web" ? "100vh" : "800px")};
-  min-height: ${(props) => (props.os !== "web" ? "100vh" : "800px")};
-  border-radius: ${(props) => (props.os === "web" ? "10px" : "0px")};
+  height: ${({ os }) => (os !== "web" ? "100vh" : "800px")};
+  min-height: ${({ os }) => (os !== "web" ? "100vh" : "800px")};
+  border-radius: ${({ os }) => (os === "web" ? "10px" : "0px")};
+  background-color: ${({ bgcolor }) => makeBgColor(bgcolor)};
   overflow: auto;
 `;
 
 interface LayoutProps {
   children: ReactNode;
+  bgColor: BgColor;
 }
-const Layout = ({ children }: LayoutProps) => {
+const Layout = ({ children, bgColor }: LayoutProps) => {
   const [os, setOs] = useRecoilState(osAtom);
   const resize = useCallback(() => {
     setOs(osCheck());
@@ -41,7 +56,9 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <Root>
-      <Frame os={os}>{children}</Frame>
+      <Frame os={os} bgcolor={bgColor}>
+        {children}
+      </Frame>
     </Root>
   );
 };

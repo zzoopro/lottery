@@ -51,7 +51,8 @@ const SignupForm = () => {
   const onSubmit = (data: FieldValues) => {
     data["coin"] = 5;
     API.signup(data as ISignup).then((res) => {
-      navigate("/master/random-box");
+      console.log(res);
+      // navigate("/master/random-box");
     });
   };
 

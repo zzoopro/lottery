@@ -1,9 +1,9 @@
 import { styled } from "styled-components";
 import Input from "./Input";
 import { FieldValues, useForm } from "react-hook-form";
-import Box from "../common/UI/Box";
 import BigButton from "../common/UI/BigButton";
 import { useNavigate } from "react-router-dom";
+import { login } from "../../api/api";
 
 const Form = styled.form`
   display: flex;
@@ -21,6 +21,11 @@ const ErrorText = styled.p`
   font-family: Noto Sans Kr;
 `;
 
+export interface ILogin {
+  id: string;
+  password: string;
+}
+
 const LoginForm = () => {
   const navigate = useNavigate();
   const {
@@ -30,15 +35,15 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data: FieldValues) => {
-    navigate("/master/random-box");
+  const onSubmit = async (data: FieldValues) => {
+    login(data as ILogin).then((res) => console.log(res));
   };
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Input
         placeholder="아이디를 입력해주세요"
-        register={register("userId", {
+        register={register("id", {
           required: true,
           minLength: { value: 4, message: "최소 4글자를 입력해주세요." },
           maxLength: {

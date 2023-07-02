@@ -1,5 +1,4 @@
 import LoginForm from "../components/auth/LoginForm";
-import Background from "../components/common/UI/Background";
 import Layout from "../components/common/Layout";
 import Scaffold from "../components/common/UI/Scaffold";
 import Logo from "../components/common/UI/Logo";
@@ -40,26 +39,24 @@ const LinkTo = styled(Link)`
 
 const Login = () => {
   return (
-    <Layout>
-      <Background bgImg="./images/bg-login.jpg">
-        <Scaffold>
-          <Box h="60px" />
-          <Logo width="70%" />
-          <Em>누가 나한테 편지를 썼을까?</Em>
-          <LoginForm />
-          <FlexBox
-            direction="row"
-            style={{
-              justifyContent: "space-between",
-              marginTop: "10px",
-              padding: "0px 10px",
-            }}
-          >
-            <Span>편지를 받아보고 싶나요?</Span>
-            <LinkTo to="/signup">회원가입</LinkTo>
-          </FlexBox>
-        </Scaffold>
-      </Background>
+    <Layout bgColor="dark">
+      <Scaffold>
+        <Box h="60px" />
+        <Logo width="70%" />
+        <Em>누가 나한테 편지를 썼을까?</Em>
+        <LoginForm />
+        <FlexBox
+          direction="row"
+          style={{
+            justifyContent: "space-between",
+            marginTop: "10px",
+            padding: "0px 10px",
+          }}
+        >
+          <Span>편지를 받아보고 싶나요?</Span>
+          <LinkTo to="/signup">회원가입</LinkTo>
+        </FlexBox>
+      </Scaffold>
     </Layout>
   );
 };
