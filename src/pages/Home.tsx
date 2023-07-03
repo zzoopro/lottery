@@ -23,6 +23,8 @@ import { useRecoilState } from "recoil";
 import { IPopup, popupAtom, showPopup } from "../atom/atom";
 import { CapsuleOpenType } from "../utils/type";
 import FlexBox from "../components/common/UI/FlexBox";
+import { useQuery } from "@tanstack/react-query";
+import { user } from "../api/api";
 
 const Img = styled.img`
   user-select: none;
@@ -196,6 +198,8 @@ const Home = () => {
   const [capsule, setCapsule] = useState<CapsuleStatus>();
   const [letterBgColor, setLetterBgColor] = useState<string>("");
   const controls = useDragControls();
+
+  const { data } = useQuery({ queryKey: ["user"], queryFn: user });
 
   useEffect(() => {
     if (machineRef.current) {

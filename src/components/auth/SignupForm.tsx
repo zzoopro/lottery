@@ -4,6 +4,8 @@ import * as API from "../../api/api";
 import { FieldValues, useForm } from "react-hook-form";
 import BigButton from "../common/UI/BigButton";
 import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { popupAtom, showPopup } from "../../atom/atom";
 
 const Form = styled.form`
   display: flex;
@@ -40,6 +42,7 @@ export interface ISignup {
 
 const SignupForm = () => {
   const navigate = useNavigate();
+  const [popup, setPopup] = useRecoilState(popupAtom);
 
   const {
     register,
@@ -48,12 +51,21 @@ const SignupForm = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data: FieldValues) => {
+  const onSubmit = async (data: FieldValues) => {
+    const ok = await API.idCheck(data.userId).then((res) => res);
+    if (!Boolean(ok))
+      return setPopup(showPopup({ content: "사용중인 아이디입니다." }));
     data["coin"] = 5;
-    API.signup(data as ISignup).then((res) => {
-      console.log(res);
-      // navigate("/master/random-box");
-    });
+    API.signup(data as ISignup)
+      .then((res) => {
+        setPopup(
+          showPopup({
+            content: "회원가입에 성공하였습니다.",
+            onConfirm: () => navigate("/login"),
+          })
+        );
+      })
+      .catch((error: any) => setPopup(showPopup()));
   };
 
   return (

@@ -25,3 +25,6 @@ export const POST = "POST";
 export const GET = "GET";
 
 export const USER = "user";
+
+export const USER_LOGIN = "user/login";
+export const USER_CHECK = "user/check";

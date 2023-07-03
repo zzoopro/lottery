@@ -86,11 +86,12 @@ const Writing = styled(motion.div)`
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: max-content;
 `;
 
 const TextArea = styled.textarea`
   width: 100%;
-  height: 60vh;
+  height: 300px;
   flex-shrink: 0;
   border-radius: 20px;
   border: 1px solid var(--unnamed, #c6c6c6);
@@ -149,7 +150,7 @@ const Reply = () => {
               initial="initial"
               animate="animate"
               exit="exit"
-              key="setting"
+              // key="setting"
             >
               <H2>닉네임 적기</H2>
               <P>로그인을 하면 닉네임을 바꿀 수 없어요</P>
@@ -192,7 +193,7 @@ const Reply = () => {
               initial="initial"
               animate="animate"
               exit="exit"
-              key="writing"
+              // key="writing"
             >
               <H2>TO. 익쥬</H2>
               <TextArea placeholder="내용을 적어주세요. 다른 사람에게 상처를 주는 말은 자제해주세요."></TextArea>

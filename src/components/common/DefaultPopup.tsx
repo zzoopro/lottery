@@ -74,17 +74,20 @@ const Button = styled.button`
 
 const popupVariants: Variants = {
   initial: {
-    transform: "translate(-50%, -50%)",
+    x: "-50%",
+    y: "-50%",
     scale: 0,
     opacity: 0,
   },
   animate: {
-    transform: "translate(-50%, -50%)",
+    x: "-50%",
+    y: "-50%",
     scale: 1,
     opacity: 1,
   },
   exit: {
-    transform: "translate(-50%, -50%)",
+    x: "-50%",
+    y: "-50%",
     opacity: 0,
     transition: {
       duration: 0.05,
@@ -119,7 +122,7 @@ const DefaultPopup = () => {
           initial="initial"
           animate="animate"
           exit="exit"
-          transition={{ type: "tween", duration: 0.15 }}
+          transition={{ type: "spring", duration: 0.1 }}
         >
           {popup.title ? (
             <Title>{popup.title}</Title>

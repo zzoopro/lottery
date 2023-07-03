@@ -3,8 +3,10 @@ import Input from "./Input";
 import { FieldValues, useForm } from "react-hook-form";
 import BigButton from "../common/UI/BigButton";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../api/api";
+import * as API from "../../api/api";
 import { AUTH } from "../../utils/constants";
+import { useRecoilState } from "recoil";
+import { popupAtom, showPopup } from "../../atom/atom";
 
 const Form = styled.form`
   display: flex;
@@ -33,6 +35,7 @@ interface LoginResponse {
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const [popup, setPopup] = useRecoilState(popupAtom);
   const {
     register,
     handleSubmit,
@@ -41,9 +44,17 @@ const LoginForm = () => {
   } = useForm();
 
   const onSubmit = async (data: FieldValues) => {
-    const { token, jarId }: LoginResponse = await login(data as ILogin);
-    localStorage.setItem(AUTH, token);
-    navigate(`/master/capsule-box/${jarId}`);
+    API.login(data as ILogin)
+      .then(({ token, jarId }: LoginResponse) => {
+        alert("?");
+        localStorage.setItem(AUTH, token);
+        navigate(`/master/capsule-box/${jarId}`);
+      })
+      .catch((error: any) =>
+        setPopup(
+          showPopup({ content: "아이디 또는 비밀번호가 일치하지 않습니다." })
+        )
+      );
   };
 
   return (
