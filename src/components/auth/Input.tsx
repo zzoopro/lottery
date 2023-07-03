@@ -13,6 +13,7 @@ const InputTag = styled.input`
   border: 1px solid #c6c6c6;
   background: rgba(255, 255, 255, 0.14);
 
+  outline: none;
   color: rgba(255, 255, 255, 0.4);
   font-size: 20px;
   font-family: Noto Sans Kr;
@@ -22,7 +23,7 @@ const InputTag = styled.input`
 `;
 
 interface InputProps {
-  register: any;
+  register?: any;
   placeholder?: string;
   type?: InputType;
   [key: string]: any;

@@ -10,6 +10,7 @@ const Button = styled.button`
   align-items: center;
   border-radius: 20px;
   background-color: #5571ee;
+  border: none;
 
   cursor: pointer;
   color: var(--white, #fff);

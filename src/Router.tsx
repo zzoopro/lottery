@@ -16,7 +16,7 @@ const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/:userType/capsule-box/:jarId", element: <Home /> },
   {
-    path: "/:userType/capsule-box/:jarId/:capsuleId/reply",
+    path: "/:userType/capsule-box/:jarId/:capsuleId/reply/:step",
     element: <Reply />,
   },
 ]);

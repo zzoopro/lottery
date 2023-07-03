@@ -22,6 +22,14 @@ const GoBackButton = styled.div`
   align-items: center;
   width: 50px;
   height: 50px;
+  cursor: pointer;
+
+  &:hover {
+    svg {
+      transition: all ease-in-out 0.1s;
+      transform: scale(120%);
+    }
+  }
 `;
 const GoBack = styled(FontAwesomeIcon)`
   display: block;

@@ -43,7 +43,7 @@ const Machine = styled(motion.div)`
   border-radius: 5px;
   z-index: 3;
 `;
-const Item = styled(motion.div)<{ bgcolor: string }>`
+const Capsule = styled(motion.div)<{ bgcolor: string }>`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -252,7 +252,9 @@ const Home = () => {
     (event) => {
       setCapsule({ isOpen: false, capsuleId: "" });
       setLetterBgColor("");
-      navigate(`/${userType}/capsule-box/${jarId}/${capsule?.capsuleId}/reply`);
+      navigate(
+        `/${userType}/capsule-box/${jarId}/${capsule?.capsuleId}/reply/setting`
+      );
     },
     [navigate, jarId, userType, capsule]
   );
@@ -287,7 +289,7 @@ const Home = () => {
 
       <Machine ref={machineRef}>
         {items.map((item, i) => (
-          <Item
+          <Capsule
             key={i}
             onClick={onCapsuleClick(String(item.value), "choice")}
             drag
@@ -301,7 +303,7 @@ const Home = () => {
             dragControls={controls}
           >
             <CapsuleLight src="/images/capsule-light.png" />
-          </Item>
+          </Capsule>
         ))}
       </Machine>
 
