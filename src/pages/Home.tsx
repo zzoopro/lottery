@@ -24,7 +24,7 @@ import { IPopup, popupAtom, showPopup } from "../atom/atom";
 import { CapsuleOpenType } from "../utils/type";
 import FlexBox from "../components/common/UI/FlexBox";
 import { useQuery } from "@tanstack/react-query";
-import { user } from "../api/api";
+import { capsules, user } from "../api/api";
 
 const Img = styled.img`
   user-select: none;
@@ -188,6 +188,31 @@ interface CapsuleStatus {
   capsuleId: string;
 }
 
+interface IUser {
+  coin: number;
+  jarId: string;
+  nickname: string;
+  phoneNumber: string;
+  userId: string;
+  [key: string]: any;
+}
+interface ICapsule {
+  capsuleId: string;
+  authorNickname: string;
+  createdAt: string;
+  emojiReply: string;
+  type: string;
+  color: string;
+  public: boolean;
+  read: boolean;
+}
+
+interface IJar {
+  coin: number;
+  userNickname: string;
+  capsules: ICapsule[];
+}
+
 const Home = () => {
   const navigate = useNavigate();
   const { userType, jarId } = useParams();
@@ -199,7 +224,11 @@ const Home = () => {
   const [letterBgColor, setLetterBgColor] = useState<string>("");
   const controls = useDragControls();
 
-  const { data } = useQuery({ queryKey: ["user"], queryFn: user });
+  const { data } = useQuery<IUser>({ queryKey: ["user"], queryFn: user });
+  const { data: jar } = useQuery<IJar>({
+    queryKey: ["jar"],
+    queryFn: () => capsules(jarId ?? ""),
+  });
 
   useEffect(() => {
     if (machineRef.current) {
@@ -208,7 +237,7 @@ const Home = () => {
       const machineWidth = rect.width;
       const machineHeight = rect.height;
 
-      items.forEach((item, index) => {
+      jar?.capsules.forEach((item, index) => {
         const itemRef = machine.childNodes[index] as HTMLDivElement;
         const itemWidth = itemRef.offsetWidth;
         const itemHeight = itemRef.offsetHeight;
@@ -220,9 +249,12 @@ const Home = () => {
 
         itemRef.style.left = `${randomX}px`;
         itemRef.style.top = `${randomY}px`;
+        itemRef.style.backgroundColor = `${item.color}`;
       });
     }
-  }, []);
+  }, [jar]);
+
+  useEffect(() => {}, [data]);
 
   const openCapsule = useCallback((el: Element, capsuleId: string) => {
     setCapsule({ isOpen: true, capsuleId: String(capsuleId) });

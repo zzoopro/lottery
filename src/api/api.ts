@@ -3,6 +3,7 @@ import { ISignup } from "../components/auth/SignupForm";
 import {
   AUTH_TOKEN,
   GET,
+  JAR,
   POST,
   USER,
   USER_CHECK,
@@ -50,5 +51,16 @@ export const user = async () => {
   return await fetch(`${SERVER_URL}/${USER}`, {
     method: GET,
     headers: makeHeaders(),
-  }).catch((error: Error) => ErrNetwork(error));
+  })
+    .then((response) => response.json())
+    .catch((error: Error) => ErrNetwork(error));
+};
+
+export const capsules = async (jarId: string) => {
+  return await fetch(`${SERVER_URL}/${JAR}/${jarId}`, {
+    method: GET,
+    headers: makeHeaders(),
+  })
+    .then((response) => response.json())
+    .catch((error: Error) => ErrNetwork(error));
 };

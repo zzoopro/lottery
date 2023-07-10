@@ -18,7 +18,7 @@ export const hexArray = [
 ];
 
 export const AUTH = "auth";
-export const AUTH_TOKEN = JSON.parse(localStorage.getItem(AUTH)!);
+export const AUTH_TOKEN = localStorage.getItem(AUTH);
 
 // API
 export const POST = "POST";
@@ -28,3 +28,4 @@ export const USER = "user";
 
 export const USER_LOGIN = "user/login";
 export const USER_CHECK = "user/check";
+export const JAR = "jar";
