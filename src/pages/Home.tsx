@@ -146,13 +146,6 @@ const Letter = styled(motion.div)<{ bgcolor: string }>`
   z-index: 90;
 `;
 
-const items = Array.from({ length: 10 })
-  .map((x, i) => i + 1)
-  .map((item: number) => ({
-    value: item,
-    bgColor: RandomColor(),
-  }));
-
 type DragEventHandlerType = (
   event: MouseEvent | TouchEvent | PointerEvent,
   info: PanInfo
@@ -167,19 +160,6 @@ const letterVariants: Variants = {
   },
   exit: {
     opacity: 0,
-  },
-};
-
-const randomButtonVariants: Variants = {
-  initial: {
-    scale: 1,
-    left: "50%",
-    top: "50%",
-  },
-  animate: {
-    scale: [1, 1.2, 1],
-    left: "50%",
-    top: "50%",
   },
 };
 
@@ -324,16 +304,16 @@ const Home = () => {
       </FlexBox>
 
       <Machine ref={machineRef}>
-        {items.map((item, i) => (
+        {jar?.capsules?.map((item, i) => (
           <Capsule
             key={i}
-            onClick={onCapsuleClick(String(item.value), "choice")}
+            onClick={onCapsuleClick(String(item.capsuleId), "choice")}
             drag
             onDragStart={onDragStart as any}
             onDragEnd={onDragEnd as any}
             dragConstraints={machineRef}
             dragElastic={0}
-            bgcolor={item.bgColor}
+            bgcolor={item.color}
             whileTap={{ scale: 1.2, zIndex: 2 }}
             whileDrag={{ scale: 1.2, zIndex: 2 }}
             dragControls={controls}
