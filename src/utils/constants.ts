@@ -18,7 +18,7 @@ export const hexArray = [
 ];
 
 export const AUTH = "auth";
-export const AUTH_TOKEN = localStorage.getItem(AUTH);
+export const AUTH_TOKEN = JSON.parse(localStorage.getItem(AUTH)!);
 
 // API
 export const POST = "POST";

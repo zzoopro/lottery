@@ -12,7 +12,9 @@ import { isExist } from "../utils/functions";
 
 export const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
-const handleError = (error: Error) => {};
+const ErrNetwork = (error: Error) => {
+  console.log("ErrNetwork: ", error);
+};
 
 const makeHeaders = () => {
   return {
@@ -26,9 +28,7 @@ export const signup = async (data: ISignup) => {
     method: POST,
     body: JSON.stringify(data),
     headers: makeHeaders(),
-  })
-    .then((response: Response) => response.json())
-    .catch((error: Error) => handleError(error));
+  }).catch((error: Error) => ErrNetwork(error));
 };
 
 export const login = async (data: ILogin) => {
@@ -36,25 +36,19 @@ export const login = async (data: ILogin) => {
     method: POST,
     body: JSON.stringify(data),
     headers: makeHeaders(),
-  })
-    .then((response: Response) => response.json())
-    .catch((error: Error) => handleError(error));
+  }).catch((error: Error) => ErrNetwork(error));
 };
 
 export const idCheck = async (id: string) => {
   return await fetch(`${SERVER_URL}/${USER_CHECK}?id=${id}`, {
     method: GET,
     headers: makeHeaders(),
-  })
-    .then((response: Response) => response.json())
-    .catch((error: Error) => handleError(error));
+  }).catch((error: Error) => ErrNetwork(error));
 };
 
 export const user = async () => {
   return await fetch(`${SERVER_URL}/${USER}`, {
     method: GET,
     headers: makeHeaders(),
-  })
-    .then((response: Response) => response.json())
-    .catch((error: Error) => handleError(error));
+  }).catch((error: Error) => ErrNetwork(error));
 };

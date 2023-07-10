@@ -1,5 +1,4 @@
 import { OS } from "../atom/atom";
-import { hexArray } from "./constants";
 
 export function RandomColor() {
   var letters = "0123456789ABCDEF";
@@ -14,13 +13,10 @@ export function osCheck(): OS {
   if (/Android/i.test(navigator.userAgent)) return "android";
   if (/iPhone|iPad/i.test(navigator.userAgent)) return "ios";
   return "web";
-  // return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-  //   navigator.userAgent
-  // );
 }
 
 export function isExist(data: any): boolean {
-  if (!data) return false;
+  if (data === null || data === undefined) return false;
   if (data === "") return false;
   return true;
 }
@@ -29,4 +25,14 @@ export function isEmpty(data: any): boolean {
   if (!data) return true;
   if (data === "") return true;
   return false;
+}
+
+export async function handleResponse(response: Response): Promise<any> {
+  return new Promise(async (resolve, reject) => {
+    const json = await response.json();
+    if (!response.ok) {
+      return reject(json.message);
+    }
+    return resolve(json);
+  });
 }
