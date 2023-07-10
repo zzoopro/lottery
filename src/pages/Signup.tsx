@@ -24,16 +24,6 @@ const Span = styled.span`
   line-height: 167.023%;
 `;
 
-const LinkTo = styled(Link)`
-  color: #fff;
-  font-size: 20px;
-  font-family: Noto Sans Kr;
-  font-style: normal;
-  font-weight: 300;
-  line-height: 167.023%;
-  text-decoration-line: underline;
-`;
-
 const Signup = () => {
   return (
     <Layout bgColor="dark">

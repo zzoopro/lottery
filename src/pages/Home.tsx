@@ -16,11 +16,11 @@ import {
   useState,
 } from "react";
 import Layout from "../components/common/Layout";
-import { RandomColor } from "../utils/functions";
+
 import { useNavigate, useParams } from "react-router-dom";
 import BigButton from "../components/common/UI/BigButton";
 import { useRecoilState } from "recoil";
-import { IPopup, popupAtom, showPopup } from "../atom/atom";
+import { popupAtom, showPopup } from "../atom/atom";
 import { CapsuleOpenType } from "../utils/type";
 import FlexBox from "../components/common/UI/FlexBox";
 import { useQuery } from "@tanstack/react-query";
@@ -35,11 +35,11 @@ const Img = styled.img`
 
 const Machine = styled(motion.div)`
   position: absolute;
-  top: 20.5%;
+  top: 19%;
   left: 50.5%;
   transform: translateX(-50%);
   width: 65%;
-  aspect-ratio: 1 / 1.01;
+  aspect-ratio: 1 / 1.05;
   background-color: #f1f1f1;
   border: 1px solid #333;
   border-radius: 5px;
@@ -146,6 +146,22 @@ const Letter = styled(motion.div)<{ bgcolor: string }>`
   z-index: 90;
 `;
 
+const CopyURL = styled(motion.div)`
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 30px;
+  font-family: Noto Sans Kr;
+  font-weight: bold;
+  font-size: 16px;
+  color: #222;
+  background-color: #f1f1f1;
+  padding: 7px 10px;
+  border-radius: 4px;
+  z-index: 50;
+`;
+
 type DragEventHandlerType = (
   event: MouseEvent | TouchEvent | PointerEvent,
   info: PanInfo
@@ -195,6 +211,7 @@ interface IJar {
 
 const Home = () => {
   const navigate = useNavigate();
+
   const { userType, jarId } = useParams();
   const [popup, setPopup] = useRecoilState(popupAtom);
   const machineRef = useRef<HTMLDivElement>(null);
@@ -282,6 +299,25 @@ const Home = () => {
     isDragging.current = false;
   }, []);
 
+  const copyURL = useCallback(() => {
+    navigator.clipboard
+      .writeText(document.location.href.replace("master", "guest"))
+      .then(() => {
+        setPopup(
+          showPopup({
+            content: `링크가 복사되었습니다.\n공유하면 편지를 받을 수 있습니다.`,
+          })
+        );
+      })
+      .catch((err) => {
+        setPopup(
+          showPopup({
+            content: "링크 복사에 실패하였습니다.",
+          })
+        );
+      });
+  }, [setPopup]);
+
   return (
     <Layout bgColor="blue">
       <CapsuleBox src="/images/capsule-box.png" />
@@ -322,6 +358,10 @@ const Home = () => {
           </Capsule>
         ))}
       </Machine>
+
+      <CopyURL style={{ left: "50%" }} onClick={copyURL}>
+        링크 복사하기
+      </CopyURL>
 
       <AnimatePresence>
         {capsule?.isOpen && (

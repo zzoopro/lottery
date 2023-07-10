@@ -6,6 +6,7 @@ import BigButton from "../common/UI/BigButton";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { popupAtom, showPopup } from "../../atom/atom";
+import { handleResponse } from "../../utils/functions";
 
 const Form = styled.form`
   display: flex;
@@ -51,12 +52,26 @@ const SignupForm = () => {
     formState: { errors },
   } = useForm();
 
+  const checkId = async (data: FieldValues) => {
+    const idCheckResponse = await API.idCheck(data.userId);
+    handleResponse(idCheckResponse as Response)
+      .then((ok: boolean) => {
+        if (!ok) {
+          return setPopup(
+            showPopup({ content: "이미 사용중인 아이디입니다." })
+          );
+        }
+        onSubmit(data);
+      })
+      .catch((error: string) => {
+        setPopup(showPopup({ content: error }));
+      });
+  };
+
   const onSubmit = async (data: FieldValues) => {
-    const ok = await API.idCheck(data.userId).then((res) => res);
-    if (!Boolean(ok))
-      return setPopup(showPopup({ content: "사용중인 아이디입니다." }));
     data["coin"] = 5;
-    API.signup(data as ISignup)
+    const response = await API.signup(data as ISignup);
+    handleResponse(response as Response)
       .then((res) => {
         setPopup(
           showPopup({
@@ -69,7 +84,7 @@ const SignupForm = () => {
   };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(checkId)}>
       <Label htmlFor="userId">아이디</Label>
       <Input
         id="userId"

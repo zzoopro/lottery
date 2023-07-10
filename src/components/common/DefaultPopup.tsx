@@ -45,11 +45,12 @@ const CapsuleImg = styled(Img)`
 const Content = styled.p`
   color: #000;
   text-align: center;
-  font-size: 20px;
+  font-size: 18px;
   font-family: Noto Sans KR;
   font-style: normal;
   font-weight: 500;
   line-height: 28px;
+  white-space: pre-line;
 `;
 const Buttons = styled.div`
   width: 100%;
