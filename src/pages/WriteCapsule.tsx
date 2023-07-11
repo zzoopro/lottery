@@ -5,10 +5,14 @@ import Input from "../components/auth/Input";
 import Scafford from "../components/common/UI/Scaffold";
 import FlexBox from "../components/common/UI/FlexBox";
 import { theme } from "../css/theme";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import BigButton from "../components/common/UI/BigButton";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { AnimatePresence, Variants, motion } from "framer-motion";
+import { IJar, IUser } from "../utils/type";
+import { useQuery } from "@tanstack/react-query";
+import { capsules, user } from "../api/api";
+import { isEmpty, isExist } from "../utils/functions";
 
 const H2 = styled.h2`
   color: #fff;
@@ -25,7 +29,7 @@ const P = styled.p`
   font-family: Noto Sans Kr;
   font-style: normal;
   font-weight: 500;
-  margin-top: 5px;
+  margin-top: 10px;
 `;
 
 const Capsule = styled.div<{ bgcolor: string; selected: boolean }>`
@@ -39,8 +43,8 @@ const Capsule = styled.div<{ bgcolor: string; selected: boolean }>`
   aspect-ratio: 1 / 1;
   box-shadow: 0px 10px 10px rgba(88, 83, 83, 0.2);
   cursor: pointer;
-  filter: ${({ selected }) => !selected && "blur(2px)"};
-  transform: ${({ selected }) => !selected && "scale(90%)"};
+  filter: ${({ selected }) => !selected && "blur(3px)"};
+  transform: ${({ selected }) => !selected && "scale(85%)"};
   transition: all ease-in-out 0.1s;
 `;
 
@@ -120,28 +124,47 @@ const WritingVariants: Variants = {
   exit: { opacity: 0, x: 20 },
 };
 
-const Reply = () => {
-  const { userType, jarId, capsuleId, step } = useParams();
+interface WritePayload {
+  authorNickname: string;
+  content: string;
+  color: string;
+  public: boolean;
+}
+
+const WriteCapsule = () => {
+  const { userType, jarId, writeType, step } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const [capsuleColor, setCapsuleColor] = useState<string>(
-    theme.capsule["red"]
-  );
-  const [isPublic, setIsPublic] = useState<boolean>(false);
-  const pickCapsuleColor = useCallback((color: string) => {
-    setCapsuleColor(color);
-  }, []);
+  const { data: userData } = useQuery<IUser>({
+    queryKey: ["user"],
+    queryFn: user,
+  });
+  const { data: jar } = useQuery<IJar>({
+    queryKey: ["jar"],
+    queryFn: () => capsules(jarId ?? ""),
+  });
+
+  const [payload, setPayload] = useState<WritePayload>();
 
   const onButtonClick = useCallback(() => {
-    if (step === "setting")
+    if (writeType === "reply" && step === "setting") {
+      const capsuleId = searchParams.get("capsuleId");
       return navigate(
-        `/${userType}/capsule-box/${jarId}/${capsuleId}/reply/write`
+        `/${userType}/write/${jarId}/reply/writing?capsuleId=${capsuleId}`
       );
-  }, [navigate, userType, jarId, capsuleId, step]);
+    }
+    if (writeType === "send" && step === "setting") {
+      return navigate(`/${userType}/write/${jarId}/send/writing`);
+    }
+    if (step === "writing") {
+      console.log(payload);
+    }
+  }, [navigate, userType, jarId, step, writeType, searchParams]);
 
   return (
     <Layout bgColor="dark">
-      <Header goBack title="답장하기" />
+      <Header goBack title={writeType === "send" ? "편지쓰기" : "답장하기"} />
       <Scafford style={{ justifyContent: "space-between" }}>
         <AnimatePresence mode="sync">
           {step === "setting" && (
@@ -150,14 +173,23 @@ const Reply = () => {
               initial="initial"
               animate="animate"
               exit="exit"
-              // key="setting"
             >
               <H2>닉네임 적기</H2>
               <P>로그인을 하면 닉네임을 바꿀 수 없어요</P>
               <Input
                 type="text"
-                placeholder="익명의 누군가"
+                placeholder={
+                  isEmpty(userData) ? "익명의 누군가" : userData?.nickname
+                }
                 style={{ marginTop: "20px" }}
+                disabled={isExist(userData)}
+                onChange={(e) =>
+                  setPayload((payload) => ({
+                    ...payload,
+                    authorNickname: e.target.value,
+                  }))
+                }
+                value={payload?.authorNickname}
               />
 
               <H2>캡슐 색 고르기</H2>
@@ -166,36 +198,47 @@ const Reply = () => {
                 direction="row"
                 style={{ justifyContent: "space-around", marginTop: "20px" }}
               >
-                {Object.entries(theme.capsule).map(([key, value]) => (
+                {Object.entries(theme.capsule).map(([key, color]) => (
                   <Capsule
-                    key={value}
-                    onClick={() => pickCapsuleColor(value)}
-                    bgcolor={value}
-                    selected={value === capsuleColor}
+                    key={color}
+                    onClick={() =>
+                      setPayload((payload) => ({ ...payload, color }))
+                    }
+                    bgcolor={color}
+                    selected={color === (payload?.color ?? "red")}
                   />
                 ))}
               </FlexBox>
               <H2>편지 보여주기</H2>
               <P>편지를 모두에게 공개할까요?</P>
               <Buttons>
-                <Button onClick={() => setIsPublic(false)} selected={!isPublic}>
+                <Button
+                  onClick={() =>
+                    setPayload((payload) => ({ ...payload, public: false }))
+                  }
+                  selected={!payload?.public}
+                >
                   비공개
                 </Button>
-                <Button onClick={() => setIsPublic(true)} selected={isPublic}>
+                <Button
+                  onClick={() =>
+                    setPayload((payload) => ({ ...payload, public: true }))
+                  }
+                  selected={payload?.public}
+                >
                   공개
                 </Button>
               </Buttons>
             </Setting>
           )}
-          {step === "write" && (
+          {step === "writing" && (
             <Writing
               variants={WritingVariants}
               initial="initial"
               animate="animate"
               exit="exit"
-              // key="writing"
             >
-              <H2>TO. 익쥬</H2>
+              <H2>TO. {jar?.userNickname}</H2>
               <TextArea placeholder="내용을 적어주세요. 다른 사람에게 상처를 주는 말은 자제해주세요."></TextArea>
             </Writing>
           )}
@@ -209,4 +252,4 @@ const Reply = () => {
   );
 };
 
-export default Reply;
+export default WriteCapsule;

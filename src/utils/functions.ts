@@ -1,4 +1,5 @@
 import { OS } from "../atom/atom";
+import { AUTH } from "./constants";
 
 export function RandomColor() {
   var letters = "0123456789ABCDEF";
@@ -35,4 +36,8 @@ export async function handleResponse(response: Response): Promise<any> {
     }
     return resolve(json);
   });
+}
+
+export function isLogined(): boolean {
+  return isExist(localStorage.getItem(AUTH)!);
 }

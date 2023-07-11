@@ -21,11 +21,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import BigButton from "../components/common/UI/BigButton";
 import { useRecoilState } from "recoil";
 import { popupAtom, showPopup } from "../atom/atom";
-import { CapsuleOpenType } from "../utils/type";
-import FlexBox from "../components/common/UI/FlexBox";
+import { CapsuleOpenType, IJar, IUser } from "../utils/type";
 import { useQuery } from "@tanstack/react-query";
 import { capsules, user } from "../api/api";
-import { AUTH } from "../utils/constants";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLink, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { isEmpty, isLogined } from "../utils/functions";
 
 const Img = styled.img`
   user-select: none;
@@ -34,13 +35,18 @@ const Img = styled.img`
   -ms-user-select: none; /* IE 10+ */
 `;
 
+const Main = styled.main`
+  position: relative;
+  width: 100%;
+  height: 620px;
+`;
 const Machine = styled(motion.div)`
   position: absolute;
-  top: 19%;
+  top: 135px;
   left: 50.5%;
   transform: translateX(-50%);
-  width: 65%;
-  aspect-ratio: 1 / 1.05;
+  height: 250px;
+  aspect-ratio: 1 / 1;
   background-color: #f1f1f1;
   border: 1px solid #333;
   border-radius: 5px;
@@ -63,10 +69,11 @@ const Capsule = styled(motion.div)<{ bgcolor: string }>`
 const CapsuleBox = styled(Img)`
   position: absolute;
   left: 50%;
-  top: 15%;
+  top: 105px;
   transform: translateX(-50%);
   object-fit: contain;
-  width: 80%;
+  max-width: 80%;
+  height: 500px;
   z-index: 2;
   pointer-events: none;
 `;
@@ -79,6 +86,8 @@ const CapsuleLight = styled(Img)`
 `;
 const RandomButton = styled(motion(Img))`
   position: absolute;
+  left: 50%;
+  top: 68%;
   width: 70px;
   object-fit: contain;
   z-index: 5;
@@ -127,7 +136,7 @@ const From = styled.h3`
   }
 `;
 
-const Letter = styled(motion.div)<{ bgcolor: string }>`
+const Letter = styled(motion.div)`
   position: absolute;
   width: 90%;
   left: 50%;
@@ -149,6 +158,7 @@ const Letter = styled(motion.div)<{ bgcolor: string }>`
 
 const CopyURL = styled(motion.div)`
   position: fixed;
+  left: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -159,6 +169,9 @@ const CopyURL = styled(motion.div)`
   color: #fff;
   transform: translateX(-50%);
   z-index: 50;
+  svg {
+    margin-left: 5px;
+  }
 `;
 
 type DragEventHandlerType = (
@@ -183,31 +196,6 @@ interface CapsuleStatus {
   capsuleId: string;
 }
 
-interface IUser {
-  coin: number;
-  jarId: string;
-  nickname: string;
-  phoneNumber: string;
-  userId: string;
-  [key: string]: any;
-}
-interface ICapsule {
-  capsuleId: string;
-  authorNickname: string;
-  createdAt: string;
-  emojiReply: string;
-  type: string;
-  color: string;
-  public: boolean;
-  read: boolean;
-}
-
-interface IJar {
-  coin: number;
-  userNickname: string;
-  capsules: ICapsule[];
-}
-
 const Home = () => {
   const navigate = useNavigate();
 
@@ -217,7 +205,6 @@ const Home = () => {
   const isDragging = useRef<boolean>(false);
 
   const [capsule, setCapsule] = useState<CapsuleStatus>();
-  const [letterBgColor, setLetterBgColor] = useState<string>("");
   const controls = useDragControls();
 
   const { data } = useQuery<IUser>({ queryKey: ["user"], queryFn: user });
@@ -251,15 +238,21 @@ const Home = () => {
   }, [jar]);
 
   useEffect(() => {
-    if (userType === "guest") {
-      localStorage.removeItem(AUTH);
+    if (userType === "guest" && !isLogined()) {
+      setPopup(
+        showPopup({
+          content: `로그인을 하고 편지를 쓰면\n코인 1개를 받을 수 있어요!`,
+          numberOfButton: 2,
+          confirmText: "로그인",
+          rejectText: "그냥 쓸래요",
+          onConfirm: () => navigate("/login"),
+        })
+      );
     }
-  }, [userType]);
+  }, [userType, navigate, setPopup]);
 
-  const openCapsule = useCallback((el: Element, capsuleId: string) => {
+  const openCapsule = useCallback((capsuleId: string) => {
     setCapsule({ isOpen: true, capsuleId: String(capsuleId) });
-    const backgroundColor = window.getComputedStyle(el).backgroundColor;
-    setLetterBgColor(backgroundColor);
   }, []);
 
   const onCapsuleClick = useCallback(
@@ -268,31 +261,23 @@ const Home = () => {
         openType: CapsuleOpenType
       ): MouseEventHandler & TouchEventHandler =>
       (event) => {
+        if (isEmpty(jar?.capsules) || jar?.capsules.length === 0)
+          return setPopup(
+            showPopup({ content: "받은 캡슐이 없습니다.", withDimmed: true })
+          );
         if (isDragging.current) return;
-        if (openType === "random")
-          return openCapsule(event.target as Element, capsuleId);
+        if (openType === "random") return openCapsule(capsuleId);
         setPopup(
           showPopup({
             content: "코인 2개가 소진돼요!\n선택한 편지를 읽어볼까요?",
             numberOfButton: 2,
             confirmText: "읽을래요",
             rejectText: "아니요",
-            onConfirm: () => openCapsule(event.target as Element, capsuleId),
+            onConfirm: () => openCapsule(capsuleId),
           })
         );
       },
-    [openCapsule, setPopup]
-  );
-
-  const goToReply: MouseEventHandler = useCallback(
-    (event) => {
-      setCapsule({ isOpen: false, capsuleId: "" });
-      setLetterBgColor("");
-      navigate(
-        `/${userType}/capsule-box/${jarId}/${capsule?.capsuleId}/reply/setting`
-      );
-    },
-    [navigate, jarId, userType, capsule]
+    [openCapsule, setPopup, jar?.capsules]
   );
 
   const onDragStart: DragEventHandlerType = useCallback((event, info) => {
@@ -301,6 +286,15 @@ const Home = () => {
   const onDragEnd: DragEventHandlerType = useCallback((event, info) => {
     isDragging.current = false;
   }, []);
+
+  const goToReply: MouseEventHandler = useCallback(
+    (event) => {
+      navigate(
+        `/${userType}/write/${jarId}/reply/setting?capsuleId=${capsule?.capsuleId}`
+      );
+    },
+    [navigate, jarId, userType, capsule]
+  );
 
   const copyURL = useCallback(() => {
     navigator.clipboard
@@ -322,55 +316,55 @@ const Home = () => {
       });
   }, [setPopup]);
 
+  const goToWriting = useCallback(() => {
+    navigate(`/${userType}/write/${jarId}/send/setting`);
+  }, [navigate, userType, jarId]);
+
   return (
     <Layout bgColor="blue">
-      <CapsuleBox src="/images/capsule-box.png" />
-      <FlexBox
-        direction="row"
-        style={{
-          position: "absolute",
-          top: "65%",
-          justifyContent: "center",
-        }}
-      >
+      <Main>
+        <CapsuleBox src="/images/capsule-box.png" />
+
         <RandomButton
           draggable={false}
-          initial={{ scale: 1 }}
+          initial={{ scale: 1, translateX: "-50%" }}
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ repeat: Infinity, repeatDelay: 0.5, duration: 0.2 }}
           src="/images/capsule-box-button.png"
-          onClick={onCapsuleClick("1", "random")}
+          onClick={onCapsuleClick("", "random")}
         />
-      </FlexBox>
 
-      <Machine ref={machineRef}>
-        {jar?.capsules?.map((item, i) => (
-          <Capsule
-            key={i}
-            onClick={onCapsuleClick(String(item.capsuleId), "choice")}
-            drag
-            onDragStart={onDragStart as any}
-            onDragEnd={onDragEnd as any}
-            dragConstraints={machineRef}
-            dragElastic={0}
-            bgcolor={item.color}
-            whileTap={{ scale: 1.2, zIndex: 2 }}
-            whileDrag={{ scale: 1.2, zIndex: 2 }}
-            dragControls={controls}
-          >
-            <CapsuleLight src="/images/capsule-light.png" />
-          </Capsule>
-        ))}
-      </Machine>
+        <Machine ref={machineRef}>
+          {jar?.capsules?.map((item, i) => (
+            <Capsule
+              key={i}
+              onClick={onCapsuleClick(String(item.capsuleId), "choice")}
+              drag
+              onDragStart={onDragStart as any}
+              onDragEnd={onDragEnd as any}
+              dragConstraints={machineRef}
+              dragElastic={0}
+              bgcolor={item.color}
+              whileTap={{ scale: 1.2, zIndex: 2 }}
+              whileDrag={{ scale: 1.2, zIndex: 2 }}
+              dragControls={controls}
+            >
+              <CapsuleLight src="/images/capsule-light.png" />
+            </Capsule>
+          ))}
+        </Machine>
+      </Main>
 
-      <CopyURL style={{ left: "50%" }} onClick={copyURL}>
-        링크 복사하기
+      <CopyURL onClick={userType === "master" ? copyURL : goToWriting}>
+        <strong>
+          {userType === "master" ? "링크 복사하기" : "편지 작성하기"}
+        </strong>
+        <FontAwesomeIcon icon={userType === "master" ? faLink : faEnvelope} />
       </CopyURL>
 
       <AnimatePresence>
         {capsule?.isOpen && (
           <Letter
-            bgcolor={letterBgColor}
             variants={letterVariants}
             transition={{ type: "tween", duration: 0.2 }}
             initial="initial"

@@ -1,5 +1,6 @@
 import { styled } from "styled-components";
 import { InputType } from "../../utils/type";
+import { HTMLAttributes } from "react";
 
 const InputTag = styled.input`
   display: flex;
@@ -22,10 +23,8 @@ const InputTag = styled.input`
   line-height: 167.023%;
 `;
 
-interface InputProps {
+interface InputProps extends HTMLAttributes<HTMLInputElement> {
   register?: any;
-  placeholder?: string;
-  type?: InputType;
   [key: string]: any;
 }
 

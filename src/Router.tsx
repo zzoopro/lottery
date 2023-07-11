@@ -8,7 +8,7 @@ import Splash from "./pages/Splash";
 import PopupWrap from "./components/common/PopupWrap";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
-import Reply from "./pages/Reply";
+import WriteCapsule from "./pages/WriteCapsule";
 
 const router = createBrowserRouter([
   { path: "/", element: <Splash /> },
@@ -16,8 +16,8 @@ const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/:userType/capsule-box/:jarId", element: <Home /> },
   {
-    path: "/:userType/capsule-box/:jarId/:capsuleId/reply/:step",
-    element: <Reply />,
+    path: "/:userType/write/:jarId/:writeType/:step",
+    element: <WriteCapsule />,
   },
 ]);
 
