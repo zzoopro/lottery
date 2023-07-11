@@ -131,6 +131,13 @@ interface WritePayload {
   public: boolean;
 }
 
+const INIT_PAYLOAD = {
+  authorNickname: "",
+  content: "",
+  color: "red",
+  public: false,
+};
+
 const WriteCapsule = () => {
   const { userType, jarId, writeType, step } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -145,7 +152,7 @@ const WriteCapsule = () => {
     queryFn: () => capsules(jarId ?? ""),
   });
 
-  const [payload, setPayload] = useState<WritePayload>();
+  const [payload, setPayload] = useState<WritePayload>(INIT_PAYLOAD);
 
   const onButtonClick = useCallback(() => {
     if (writeType === "reply" && step === "setting") {
@@ -158,9 +165,10 @@ const WriteCapsule = () => {
       return navigate(`/${userType}/write/${jarId}/send/writing`);
     }
     if (step === "writing") {
-      console.log(payload);
+      if (writeType === "send") {
+      }
     }
-  }, [navigate, userType, jarId, step, writeType, searchParams]);
+  }, [navigate, userType, jarId, step, writeType, searchParams, payload]);
 
   return (
     <Layout bgColor="dark">
@@ -179,17 +187,16 @@ const WriteCapsule = () => {
               <Input
                 type="text"
                 placeholder={
-                  isEmpty(userData) ? "익명의 누군가" : userData?.nickname
+                  userData?.nickname ? userData?.nickname : "익명의 누군가"
                 }
                 style={{ marginTop: "20px" }}
-                disabled={isExist(userData)}
-                onChange={(e) =>
+                disabled={isExist(userData?.nickname)}
+                onChange={(e: any) =>
                   setPayload((payload) => ({
                     ...payload,
                     authorNickname: e.target.value,
                   }))
                 }
-                value={payload?.authorNickname}
               />
 
               <H2>캡슐 색 고르기</H2>
@@ -222,7 +229,10 @@ const WriteCapsule = () => {
                 </Button>
                 <Button
                   onClick={() =>
-                    setPayload((payload) => ({ ...payload, public: true }))
+                    setPayload((payload: WritePayload) => ({
+                      ...payload,
+                      public: true,
+                    }))
                   }
                   selected={payload?.public}
                 >
@@ -239,7 +249,15 @@ const WriteCapsule = () => {
               exit="exit"
             >
               <H2>TO. {jar?.userNickname}</H2>
-              <TextArea placeholder="내용을 적어주세요. 다른 사람에게 상처를 주는 말은 자제해주세요."></TextArea>
+              <TextArea
+                placeholder="내용을 적어주세요. 다른 사람에게 상처를 주는 말은 자제해주세요."
+                onChange={(e: any) =>
+                  setPayload((payload) => ({
+                    ...payload,
+                    content: e.target.value,
+                  }))
+                }
+              />
             </Writing>
           )}
         </AnimatePresence>

@@ -207,7 +207,10 @@ const Home = () => {
   const [capsule, setCapsule] = useState<CapsuleStatus>();
   const controls = useDragControls();
 
-  const { data } = useQuery<IUser>({ queryKey: ["user"], queryFn: user });
+  const { data: userData } = useQuery<IUser>({
+    queryKey: ["user"],
+    queryFn: user,
+  });
   const { data: jar } = useQuery<IJar>({
     queryKey: ["jar"],
     queryFn: () => capsules(jarId ?? ""),
