@@ -25,6 +25,7 @@ import { CapsuleOpenType } from "../utils/type";
 import FlexBox from "../components/common/UI/FlexBox";
 import { useQuery } from "@tanstack/react-query";
 import { capsules, user } from "../api/api";
+import { AUTH } from "../utils/constants";
 
 const Img = styled.img`
   user-select: none;
@@ -154,11 +155,9 @@ const CopyURL = styled(motion.div)`
   bottom: 30px;
   font-family: Noto Sans Kr;
   font-weight: bold;
-  font-size: 16px;
-  color: #222;
-  background-color: #f1f1f1;
-  padding: 7px 10px;
-  border-radius: 4px;
+  font-size: 18px;
+  color: #fff;
+  transform: translateX(-50%);
   z-index: 50;
 `;
 
@@ -251,7 +250,11 @@ const Home = () => {
     }
   }, [jar]);
 
-  useEffect(() => {}, [data]);
+  useEffect(() => {
+    if (userType === "guest") {
+      localStorage.removeItem(AUTH);
+    }
+  }, [userType]);
 
   const openCapsule = useCallback((el: Element, capsuleId: string) => {
     setCapsule({ isOpen: true, capsuleId: String(capsuleId) });
@@ -306,6 +309,7 @@ const Home = () => {
         setPopup(
           showPopup({
             content: `링크가 복사되었습니다.\n공유하면 편지를 받을 수 있습니다.`,
+            withDimmed: true,
           })
         );
       })

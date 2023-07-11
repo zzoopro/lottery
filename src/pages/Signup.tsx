@@ -3,7 +3,6 @@ import SignupForm from "../components/auth/SignupForm";
 import Layout from "../components/common/Layout";
 import Logo from "../components/common/UI/Logo";
 import Scafford from "../components/common/UI/Scaffold";
-import { Link } from "react-router-dom";
 
 const Em = styled.span`
   color: #fff;
@@ -13,15 +12,6 @@ const Em = styled.span`
   font-weight: 300;
   text-align: center;
   margin-top: 10px;
-`;
-
-const Span = styled.span`
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 20px;
-  font-family: Noto Sans Kr;
-  font-style: normal;
-  font-weight: 300;
-  line-height: 167.023%;
 `;
 
 const Signup = () => {

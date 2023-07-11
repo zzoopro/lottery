@@ -7,13 +7,15 @@ import React, { ReactNode } from "react";
 
 const DimmedTag = styled(motion.div)`
   position: fixed;
+  left: 0;
+  top: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100vw;
   height: 100vh;
-  z-index: 90;
-  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 110;
+  background-color: rgba(0, 0, 0, 0.6);
 `;
 
 const dimmedVariants: Variants = {

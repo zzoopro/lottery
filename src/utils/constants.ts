@@ -17,7 +17,7 @@ export const hexArray = [
   "F",
 ];
 
-export const AUTH = "auth";
+export const AUTH = "auth-who-am-i";
 export const AUTH_TOKEN = localStorage.getItem(AUTH);
 
 // API
