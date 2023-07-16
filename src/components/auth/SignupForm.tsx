@@ -68,7 +68,7 @@ const SignupForm = () => {
     setPopup(
       showPopup({
         content: "회원가입에 성공하였습니다.",
-        onConfirm: () => navigate("/login"),
+        onConfirm: () => navigate("/login", { replace: true }),
       })
     );
   };

@@ -50,7 +50,7 @@ const LoginForm = () => {
       return setPopup(showPopup({ content: response.message }));
     }
     localStorage.setItem(AUTH, response.data.token);
-    navigate(`/master/capsule-box/${response.data.jarId}`);
+    navigate(`/master/capsule-box/${response.data.jarId}`, { replace: true });
   };
 
   return (

@@ -136,7 +136,7 @@ export interface IWritePayload {
 const INIT_PAYLOAD = {
   authorNickname: "",
   content: "",
-  color: "red",
+  color: theme.capsule.red,
   public: false,
 };
 
@@ -171,7 +171,12 @@ const WriteCapsule = () => {
       const response: IResponse = await sendCapsule(jarId!, payload);
       if (response.status !== 201)
         return setPopup(showPopup({ content: response.message ?? "" }));
-      navigate(-1);
+      setPopup(
+        showPopup({
+          content: "답장이 잘 전달됬어요.",
+          onConfirm: () => navigate(-1, { replace: true }),
+        })
+      );
     }
   }, [
     navigate,
@@ -226,7 +231,7 @@ const WriteCapsule = () => {
                       setPayload((payload) => ({ ...payload, color }))
                     }
                     bgcolor={color}
-                    selected={color === (payload?.color ?? "red")}
+                    selected={color === (payload?.color ?? theme.capsule.red)}
                   />
                 ))}
               </FlexBox>
