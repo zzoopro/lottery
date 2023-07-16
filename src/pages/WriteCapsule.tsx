@@ -175,7 +175,7 @@ const WriteCapsule = () => {
         const capsuleId = searchParams.get("capsuleId");
         response = await replyCapsule(jarId!, capsuleId!, payload);
       }
-      if (response?.status !== 201)
+      if (response?.status >= 300)
         return setPopup(showPopup({ content: response?.message ?? "" }));
       setPopup(
         showPopup({
