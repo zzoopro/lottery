@@ -12,7 +12,7 @@ import { AnimatePresence, Variants, motion } from "framer-motion";
 import { IJar, IUser } from "../utils/type";
 import { useQuery } from "@tanstack/react-query";
 import { capsules, sendCapsule, user } from "../api/api";
-import { handleResponse, isEmpty, isExist } from "../utils/functions";
+import { IResponse, isExist } from "../utils/functions";
 import { popupAtom, showPopup } from "../atom/atom";
 import { useRecoilState } from "recoil";
 
@@ -168,12 +168,10 @@ const WriteCapsule = () => {
       return navigate(`/${userType}/write/${jarId}/send/writing`);
     }
     if (step === "writing") {
-      if (writeType === "send") {
-        const response = await sendCapsule(jarId!, payload);
-        handleResponse(response)
-          .then((data: any) => navigate(`guest/capsule-box/${jarId}`))
-          .catch((error: string) => setPopup(showPopup({ content: error })));
-      }
+      const response: IResponse = await sendCapsule(jarId!, payload);
+      if (response.status !== 201)
+        return setPopup(showPopup({ content: response.message ?? "" }));
+      navigate(-1);
     }
   }, [
     navigate,

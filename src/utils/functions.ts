@@ -33,15 +33,14 @@ export interface IResponse {
   status: number;
   message: string | null;
 }
-export async function handleResponse(response: IResponse | any): Promise<any> {
-  return new Promise(async (resolve, reject) => {
-    if (response.status !== 200) {
-      return reject(response.message);
-    }
-    return resolve(response.data);
-  });
-}
 
 export function isLogined(): boolean {
   return isExist(localStorage.getItem(AUTH)!);
+}
+
+export function randomItem<T>(items: T[] | undefined): T {
+  if (!items) return "" as T;
+  const length = items.length;
+  const index = Math.round(Math.random() * length);
+  return items[index];
 }

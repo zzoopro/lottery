@@ -84,7 +84,6 @@ const Loading = () => {
 
     FetchInstance.interceptor.response.use(
       (response: Response) => {
-        console.log("response", response);
         callCount.current -= 1;
         if (callCount.current === 0) {
           setLoading(false);

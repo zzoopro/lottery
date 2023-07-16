@@ -7,7 +7,6 @@ import * as API from "../../api/api";
 
 import { useRecoilState } from "recoil";
 import { popupAtom, showPopup } from "../../atom/atom";
-import { handleResponse } from "../../utils/functions";
 import { AUTH } from "../../utils/constants";
 
 const Form = styled.form`

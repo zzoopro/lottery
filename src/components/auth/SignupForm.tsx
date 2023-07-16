@@ -6,7 +6,7 @@ import BigButton from "../common/UI/BigButton";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { popupAtom, showPopup } from "../../atom/atom";
-import { handleResponse } from "../../utils/functions";
+import { IResponse } from "../../utils/functions";
 
 const Form = styled.form`
   display: flex;
@@ -53,19 +53,10 @@ const SignupForm = () => {
   } = useForm();
 
   const checkId = async (data: FieldValues) => {
-    const idCheckResponse = await API.idCheck(data.userId);
-    handleResponse(idCheckResponse as Response)
-      .then((ok: boolean) => {
-        if (!ok) {
-          return setPopup(
-            showPopup({ content: "이미 사용중인 아이디입니다." })
-          );
-        }
-        onSubmit(data);
-      })
-      .catch((error: string) => {
-        setPopup(showPopup({ content: error }));
-      });
+    const response: IResponse = await API.idCheck(data.userId);
+    if (response.status !== 200)
+      return setPopup(showPopup({ content: response.message ?? "" }));
+    onSubmit(data);
   };
 
   const onSubmit = async (data: FieldValues) => {

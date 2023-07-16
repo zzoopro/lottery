@@ -27,10 +27,11 @@ import { capsules, user } from "../api/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faEnvelope, faXmark } from "@fortawesome/free-solid-svg-icons";
 import {
-  handleResponse,
+  IResponse,
   isEmpty,
   isExist,
   isLogined,
+  randomItem,
 } from "../utils/functions";
 import * as API from "../api/api";
 import FlexBox from "../components/common/UI/FlexBox";
@@ -262,13 +263,10 @@ const Home = () => {
   }, [userType, navigate, setPopup]);
 
   const openCapsule = useCallback(async (capsuleId: string) => {
-    const response = await API.capsule(jarId!, capsuleId);
-
-    handleResponse(response)
-      .then((data: ICapsuleDetail) => {
-        setCapsule({ isOpen: true, capsuleId, data });
-      })
-      .catch((error) => setPopup(showPopup({ content: error })));
+    const response: IResponse = await API.capsule(jarId!, capsuleId);
+    if (response.status !== 200)
+      return setPopup(showPopup({ content: response.message ?? "" }));
+    setCapsule({ isOpen: true, capsuleId, data: response.data as any });
   }, []);
 
   const onCapsuleClick = useCallback(
@@ -303,12 +301,13 @@ const Home = () => {
     isDragging.current = false;
   }, []);
 
-  const goToReply: MouseEventHandler = useCallback(
-    (event) => {
-      // navigate(
-      //   `/${userType}/write/${jarId}/reply/setting?capsuleId=${capsule?.capsuleId}`
-      // );
-    },
+  const goToReply = useCallback(
+    (capsuleId: string): MouseEventHandler =>
+      () => {
+        navigate(
+          `/${userType}/write/${capsule?.data?.jarId}/reply/setting?capsuleId=${capsuleId}`
+        );
+      },
     [navigate, jarId, userType, capsule]
   );
 
@@ -347,7 +346,12 @@ const Home = () => {
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ repeat: Infinity, repeatDelay: 0.5, duration: 0.2 }}
           src="/images/capsule-box-button.png"
-          onClick={onCapsuleClick("1", "random")}
+          onClick={onCapsuleClick(
+            randomItem<string>(
+              jar?.capsules.map((capsule) => capsule.capsuleId)
+            ),
+            "random"
+          )}
         />
 
         <Machine ref={machineRef}>
@@ -403,14 +407,17 @@ const Home = () => {
               />
             </FlexBox>
 
-            <Message disabled>{capsule?.data?.content}</Message>
+            <Message disabled value={capsule?.data?.content}></Message>
             <From>
               <strong>From.</strong>{" "}
               {isExist(capsule?.data?.authorNickname)
                 ? capsule?.data?.authorNickname
                 : "익명의 누군가"}
             </From>
-            <BigButton onClick={goToReply} style={{ marginTop: "20px" }}>
+            <BigButton
+              onClick={goToReply(capsule.capsuleId)}
+              style={{ marginTop: "20px" }}
+            >
               답장하기
             </BigButton>
           </Letter>
