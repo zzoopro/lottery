@@ -46,11 +46,11 @@ const Img = styled.img`
 const Main = styled.main`
   position: relative;
   width: 100%;
-  height: 620px;
+  height: 100vh;
 `;
 const Machine = styled(motion.div)`
   position: absolute;
-  top: 135px;
+  bottom: 300px;
   left: 50.5%;
   transform: translateX(-50%);
   height: 250px;
@@ -77,7 +77,7 @@ const Capsule = styled(motion.div)<{ bgcolor: string }>`
 const CapsuleBox = styled(Img)`
   position: absolute;
   left: 50%;
-  top: 105px;
+  bottom: 80px;
   transform: translateX(-50%);
   object-fit: contain;
   max-width: 80%;
@@ -95,7 +95,7 @@ const CapsuleLight = styled(Img)`
 const RandomButton = styled(motion(Img))`
   position: absolute;
   left: 50%;
-  top: 68%;
+  bottom: 200px;
   width: 70px;
   object-fit: contain;
   z-index: 5;
@@ -161,6 +161,31 @@ const Letter = styled(motion.div)`
   pointer-events: auto;
   border-radius: 20px;
   z-index: 90;
+`;
+
+const Title = styled.h1`
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  bottom: 615px;
+  font-family: Noto Sans Kr;
+  color: #fff;
+  font-size: 28px;
+  font-weight: bold;
+`;
+
+const CoinCount = styled.strong`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #fff;
+  font-family: Noto Sans Kr;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
 `;
 
 const CopyURL = styled(motion.div)`
@@ -338,8 +363,12 @@ const Home = () => {
   return (
     <Layout bgColor="blue">
       <Main>
+        <Title>{jar?.userNickname}의 뽑기통</Title>
+        <CoinCount>
+          <span>COIN POINT</span>
+          <span>{jar?.coin.toString().padStart(4, "0")}</span>
+        </CoinCount>
         <CapsuleBox src="/images/capsule-box.png" />
-
         <RandomButton
           draggable={false}
           initial={{ scale: 1, translateX: "-50%" }}
