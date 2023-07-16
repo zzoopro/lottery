@@ -65,18 +65,6 @@ const Loading = () => {
   const callCount = useRef<number>(0);
 
   useEffect(() => {
-    Axios.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-      callCount.current += 1;
-      setLoading(true);
-      return config;
-    });
-
-    Axios.interceptors.response.use((response: AxiosResponse<any, any>) => {
-      callCount.current -= 1;
-      if (callCount.current === 0) setLoading(false);
-      return response;
-    });
-
     FetchInstance.interceptor.request.use(() => {
       callCount.current += 1;
       setLoading(true);
@@ -84,8 +72,13 @@ const Loading = () => {
 
     FetchInstance.interceptor.response.use(
       (response: Response) => {
-        callCount.current -= 1;
-        if (callCount.current === 0) {
+        try {
+          callCount.current -= 1;
+          if (callCount.current === 0) {
+            setLoading(false);
+          }
+        } catch (error) {
+          alert("fuck");
           setLoading(false);
         }
         return response;

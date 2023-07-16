@@ -137,7 +137,9 @@ const Splash = () => {
         }}
         src="/images/capsule.png"
       />
-      <Button onClick={() => navigate("/login")}>시작하기</Button>
+      <Button onClick={() => navigate("/login", { replace: true })}>
+        시작하기
+      </Button>
     </Layout>
   );
 };

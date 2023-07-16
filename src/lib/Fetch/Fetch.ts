@@ -95,6 +95,7 @@ export class Fetch {
       url,
       this.makeRequestOption(Method.POST, payload)
     );
+
     if (this.responseInterceptor) {
       if (response.status !== 200)
         return this.responseInterceptor.onFail(response);

@@ -76,6 +76,19 @@ export const sendCapsule = async (jarId: string, data: IWritePayload) => {
     .catch((error: Error) => ErrNetwork(error));
 };
 
+export const replyCapsule = async (
+  jarId: string,
+  capsuleId: string,
+  data: IWritePayload
+) => {
+  return await FetchInstance.post(
+    `${SERVER_URL}/${JAR}/${jarId}/${capsuleId}/reply`,
+    data
+  )
+    .then((response) => response.json())
+    .catch((error: Error) => ErrNetwork(error));
+};
+
 export const capsule = async (jarId: string, capsuleId: string) => {
   return await FetchInstance.get(`${SERVER_URL}/${JAR}/${jarId}/${capsuleId}`)
     .then((response) => response.json())

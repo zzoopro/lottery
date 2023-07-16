@@ -11,7 +11,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { IJar, IUser } from "../utils/type";
 import { useQuery } from "@tanstack/react-query";
-import { capsules, sendCapsule, user } from "../api/api";
+import { capsules, replyCapsule, sendCapsule, user } from "../api/api";
 import { IResponse, isExist } from "../utils/functions";
 import { popupAtom, showPopup } from "../atom/atom";
 import { useRecoilState } from "recoil";
@@ -168,12 +168,21 @@ const WriteCapsule = () => {
       return navigate(`/${userType}/write/${jarId}/send/writing`);
     }
     if (step === "writing") {
-      const response: IResponse = await sendCapsule(jarId!, payload);
-      if (response.status !== 201)
-        return setPopup(showPopup({ content: response.message ?? "" }));
+      let response: IResponse | undefined;
+      if (writeType === "send") response = await sendCapsule(jarId!, payload);
+      if (writeType === "reply") {
+        payload["authorNickname"] = userData?.nickname!;
+        const capsuleId = searchParams.get("capsuleId");
+        response = await replyCapsule(jarId!, capsuleId!, payload);
+      }
+      if (response?.status !== 201)
+        return setPopup(showPopup({ content: response?.message ?? "" }));
       setPopup(
         showPopup({
-          content: "답장이 잘 전달됬어요.",
+          content:
+            writeType === "send"
+              ? "캡슐이 잘 전달됬어요."
+              : "답장이 잘 전달됬어요.",
           onConfirm: () => navigate(-1, { replace: true }),
         })
       );
