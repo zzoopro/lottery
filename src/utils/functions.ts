@@ -1,5 +1,5 @@
-import { OS } from "../atom/atom";
 import { AUTH } from "./constants";
+import { OS, Struct } from "./type";
 
 export function RandomColor() {
   var letters = "0123456789ABCDEF";
@@ -28,13 +28,17 @@ export function isEmpty(data: any): boolean {
   return false;
 }
 
-export async function handleResponse(response: Response): Promise<any> {
+export interface IResponse {
+  data: Struct<any> | null;
+  status: number;
+  message: string | null;
+}
+export async function handleResponse(response: IResponse | any): Promise<any> {
   return new Promise(async (resolve, reject) => {
-    const json = await response.json();
-    if (!response.ok) {
-      return reject(json.message);
+    if (response.status !== 200) {
+      return reject(response.message);
     }
-    return resolve(json);
+    return resolve(response.data);
   });
 }
 

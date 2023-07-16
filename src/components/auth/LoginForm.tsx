@@ -47,12 +47,11 @@ const LoginForm = () => {
 
   const onSubmit = async (data: FieldValues) => {
     const response = await API.login(data as ILogin);
-    handleResponse(response as Response)
-      .then(({ token, jarId }: ResponseData) => {
-        localStorage.setItem(AUTH, token);
-        navigate(`/master/capsule-box/${jarId}`);
-      })
-      .catch((error: string) => setPopup(showPopup({ content: error })));
+    if (response.status !== 200) {
+      return setPopup(showPopup({ content: response.message }));
+    }
+    localStorage.setItem(AUTH, response.data.token);
+    navigate(`/master/capsule-box/${response.data.jarId}`);
   };
 
   return (

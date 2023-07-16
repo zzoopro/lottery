@@ -1,5 +1,6 @@
 import { MouseEventHandler, ReactNode } from "react";
-import { atom } from "recoil";
+import { atom, useRecoilCallback } from "recoil";
+import { OS } from "../utils/type";
 
 export interface IPopup {
   isShow: boolean;
@@ -47,7 +48,6 @@ export const loadingAtom = atom<boolean>({
   default: false,
 });
 
-export type OS = "android" | "ios" | "web";
 export const osAtom = atom<OS>({
   key: "osCheck",
   default: "web",

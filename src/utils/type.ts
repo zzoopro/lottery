@@ -1,4 +1,5 @@
 export type UserType = "master" | "guest";
+export type OS = "android" | "ios" | "web";
 export type Struct<T> = {
   [key: string]: T;
 };
@@ -29,4 +30,18 @@ export interface IJar {
   coin: number;
   userNickname: string;
   capsules: ICapsule[];
+}
+
+export interface ICapsuleDetail {
+  authorNickname: string;
+  authorId: string;
+  content: string;
+  createdAt: string;
+  emojiReply: any;
+  jarId: string;
+  type: string;
+  color: string;
+  public: boolean;
+  read: boolean;
+  replied: boolean;
 }

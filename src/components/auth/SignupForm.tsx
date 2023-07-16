@@ -71,16 +71,15 @@ const SignupForm = () => {
   const onSubmit = async (data: FieldValues) => {
     data["coin"] = 5;
     const response = await API.signup(data as ISignup);
-    handleResponse(response as Response)
-      .then((res) => {
-        setPopup(
-          showPopup({
-            content: "회원가입에 성공하였습니다.",
-            onConfirm: () => navigate("/login"),
-          })
-        );
+    if (response.status !== 200) {
+      return setPopup(showPopup());
+    }
+    setPopup(
+      showPopup({
+        content: "회원가입에 성공하였습니다.",
+        onConfirm: () => navigate("/login"),
       })
-      .catch((error: any) => setPopup(showPopup()));
+    );
   };
 
   return (

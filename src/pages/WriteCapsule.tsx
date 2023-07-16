@@ -11,8 +11,10 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { IJar, IUser } from "../utils/type";
 import { useQuery } from "@tanstack/react-query";
-import { capsules, user } from "../api/api";
-import { isEmpty, isExist } from "../utils/functions";
+import { capsules, sendCapsule, user } from "../api/api";
+import { handleResponse, isEmpty, isExist } from "../utils/functions";
+import { popupAtom, showPopup } from "../atom/atom";
+import { useRecoilState } from "recoil";
 
 const H2 = styled.h2`
   color: #fff;
@@ -124,7 +126,7 @@ const WritingVariants: Variants = {
   exit: { opacity: 0, x: 20 },
 };
 
-interface WritePayload {
+export interface IWritePayload {
   authorNickname: string;
   content: string;
   color: string;
@@ -141,20 +143,21 @@ const INIT_PAYLOAD = {
 const WriteCapsule = () => {
   const { userType, jarId, writeType, step } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [popup, setPopup] = useRecoilState(popupAtom);
   const navigate = useNavigate();
 
   const { data: userData } = useQuery<IUser>({
     queryKey: ["user"],
-    queryFn: user,
+    queryFn: () => user().then((response) => response.data),
   });
   const { data: jar } = useQuery<IJar>({
     queryKey: ["jar"],
-    queryFn: () => capsules(jarId ?? ""),
+    queryFn: () => capsules(jarId ?? "").then((response) => response.data),
   });
 
-  const [payload, setPayload] = useState<WritePayload>(INIT_PAYLOAD);
+  const [payload, setPayload] = useState<IWritePayload>(INIT_PAYLOAD);
 
-  const onButtonClick = useCallback(() => {
+  const onButtonClick = useCallback(async () => {
     if (writeType === "reply" && step === "setting") {
       const capsuleId = searchParams.get("capsuleId");
       return navigate(
@@ -166,9 +169,22 @@ const WriteCapsule = () => {
     }
     if (step === "writing") {
       if (writeType === "send") {
+        const response = await sendCapsule(jarId!, payload);
+        handleResponse(response)
+          .then((data: any) => navigate(`guest/capsule-box/${jarId}`))
+          .catch((error: string) => setPopup(showPopup({ content: error })));
       }
     }
-  }, [navigate, userType, jarId, step, writeType, searchParams, payload]);
+  }, [
+    navigate,
+    userType,
+    jarId,
+    step,
+    writeType,
+    searchParams,
+    setPopup,
+    payload,
+  ]);
 
   return (
     <Layout bgColor="dark">
@@ -229,7 +245,7 @@ const WriteCapsule = () => {
                 </Button>
                 <Button
                   onClick={() =>
-                    setPayload((payload: WritePayload) => ({
+                    setPayload((payload: IWritePayload) => ({
                       ...payload,
                       public: true,
                     }))

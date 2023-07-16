@@ -21,12 +21,19 @@ import { useNavigate, useParams } from "react-router-dom";
 import BigButton from "../components/common/UI/BigButton";
 import { useRecoilState } from "recoil";
 import { popupAtom, showPopup } from "../atom/atom";
-import { CapsuleOpenType, IJar, IUser } from "../utils/type";
+import { CapsuleOpenType, ICapsuleDetail, IJar, IUser } from "../utils/type";
 import { useQuery } from "@tanstack/react-query";
 import { capsules, user } from "../api/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink, faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { isEmpty, isLogined } from "../utils/functions";
+import { faLink, faEnvelope, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  handleResponse,
+  isEmpty,
+  isExist,
+  isLogined,
+} from "../utils/functions";
+import * as API from "../api/api";
+import FlexBox from "../components/common/UI/FlexBox";
 
 const Img = styled.img`
   user-select: none;
@@ -106,7 +113,6 @@ const Message = styled.textarea`
   background: var(--unnamed, rgba(255, 255, 255, 0.14));
   margin: 20px 0px;
 
-  color: rgba(51, 51, 51, 0.4);
   font-size: 20px;
   font-family: Noto Sans Kr;
   font-style: normal;
@@ -194,6 +200,7 @@ const letterVariants: Variants = {
 interface CapsuleStatus {
   isOpen: boolean;
   capsuleId: string;
+  data: ICapsuleDetail | null;
 }
 
 const Home = () => {
@@ -209,11 +216,11 @@ const Home = () => {
 
   const { data: userData } = useQuery<IUser>({
     queryKey: ["user"],
-    queryFn: user,
+    queryFn: () => user().then((response) => response.data),
   });
   const { data: jar } = useQuery<IJar>({
     queryKey: ["jar"],
-    queryFn: () => capsules(jarId ?? ""),
+    queryFn: () => capsules(jarId ?? "").then((response) => response.data),
   });
 
   useEffect(() => {
@@ -223,7 +230,7 @@ const Home = () => {
       const machineWidth = rect.width;
       const machineHeight = rect.height;
 
-      jar?.capsules.forEach((item, index) => {
+      jar?.capsules?.forEach((item, index) => {
         const itemRef = machine.childNodes[index] as HTMLDivElement;
         const itemWidth = itemRef.offsetWidth;
         const itemHeight = itemRef.offsetHeight;
@@ -254,8 +261,14 @@ const Home = () => {
     }
   }, [userType, navigate, setPopup]);
 
-  const openCapsule = useCallback((capsuleId: string) => {
-    setCapsule({ isOpen: true, capsuleId: String(capsuleId) });
+  const openCapsule = useCallback(async (capsuleId: string) => {
+    const response = await API.capsule(jarId!, capsuleId);
+
+    handleResponse(response)
+      .then((data: ICapsuleDetail) => {
+        setCapsule({ isOpen: true, capsuleId, data });
+      })
+      .catch((error) => setPopup(showPopup({ content: error })));
   }, []);
 
   const onCapsuleClick = useCallback(
@@ -292,9 +305,9 @@ const Home = () => {
 
   const goToReply: MouseEventHandler = useCallback(
     (event) => {
-      navigate(
-        `/${userType}/write/${jarId}/reply/setting?capsuleId=${capsule?.capsuleId}`
-      );
+      // navigate(
+      //   `/${userType}/write/${jarId}/reply/setting?capsuleId=${capsule?.capsuleId}`
+      // );
     },
     [navigate, jarId, userType, capsule]
   );
@@ -334,7 +347,7 @@ const Home = () => {
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ repeat: Infinity, repeatDelay: 0.5, duration: 0.2 }}
           src="/images/capsule-box-button.png"
-          onClick={onCapsuleClick("", "random")}
+          onClick={onCapsuleClick("1", "random")}
         />
 
         <Machine ref={machineRef}>
@@ -374,12 +387,28 @@ const Home = () => {
             animate="animate"
             exit="exit"
           >
-            <To>
-              <strong>To.</strong> 익주
-            </To>
-            <Message></Message>
+            <FlexBox
+              direction="row"
+              style={{ justifyContent: "space-between" }}
+            >
+              <To>
+                <strong>To.</strong> {jar?.userNickname}
+              </To>
+              <FontAwesomeIcon
+                icon={faXmark}
+                style={{ height: 30 }}
+                onClick={() =>
+                  setCapsule({ isOpen: false, capsuleId: "", data: null })
+                }
+              />
+            </FlexBox>
+
+            <Message disabled>{capsule?.data?.content}</Message>
             <From>
-              <strong>From.</strong> 누군가
+              <strong>From.</strong>{" "}
+              {isExist(capsule?.data?.authorNickname)
+                ? capsule?.data?.authorNickname
+                : "익명의 누군가"}
             </From>
             <BigButton onClick={goToReply} style={{ marginTop: "20px" }}>
               답장하기
