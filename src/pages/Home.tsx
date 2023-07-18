@@ -35,6 +35,7 @@ import {
 } from "../utils/functions";
 import * as API from "../api/api";
 import FlexBox from "../components/common/UI/FlexBox";
+import Dimmed from "../components/common/Dimmed";
 
 const Img = styled.img`
   user-select: none;
@@ -206,6 +207,14 @@ const CopyURL = styled(motion.div)`
   }
 `;
 
+const DimmedBg = styled.div`
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 20;
+`;
+
 type DragEventHandlerType = (
   event: MouseEvent | TouchEvent | PointerEvent,
   info: PanInfo
@@ -234,6 +243,7 @@ const Home = () => {
 
   const { userType, jarId } = useParams();
   const [popup, setPopup] = useRecoilState(popupAtom);
+
   const machineRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef<boolean>(false);
 
@@ -357,7 +367,16 @@ const Home = () => {
   }, [setPopup]);
 
   const goToWriting = useCallback(() => {
-    navigate(`/${userType}/write/${jarId}/send/setting`);
+    setPopup(
+      showPopup({
+        numberOfButton: 2,
+        rejectText: "그냥 쓸래요",
+        confirmText: "로그인",
+        content: `로그인을 하고 편지를 쓰면\n코인 1개를 받을 수 있어요!`,
+        onReject: () => navigate(`/${userType}/write/${jarId}/send/setting`),
+        onConfirm: () => navigate(`/login?jarId=${jarId}`),
+      })
+    );
   }, [navigate, userType, jarId]);
 
   return (
@@ -413,43 +432,46 @@ const Home = () => {
 
       <AnimatePresence>
         {capsule?.isOpen && (
-          <Letter
-            variants={letterVariants}
-            transition={{ type: "tween", duration: 0.2 }}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
-            <FlexBox
-              direction="row"
-              style={{ justifyContent: "space-between" }}
+          <>
+            <DimmedBg />
+            <Letter
+              variants={letterVariants}
+              transition={{ type: "tween", duration: 0.2 }}
+              initial="initial"
+              animate="animate"
+              exit="exit"
             >
-              <To>
-                <strong>To.</strong> {jar?.userNickname}
-              </To>
-              <FontAwesomeIcon
-                icon={faXmark}
-                style={{ height: 30 }}
-                onClick={() =>
-                  setCapsule({ isOpen: false, capsuleId: "", data: null })
-                }
-              />
-            </FlexBox>
+              <FlexBox
+                direction="row"
+                style={{ justifyContent: "space-between" }}
+              >
+                <To>
+                  <strong>To.</strong> {jar?.userNickname}
+                </To>
+                <FontAwesomeIcon
+                  icon={faXmark}
+                  style={{ height: 30 }}
+                  onClick={() =>
+                    setCapsule({ isOpen: false, capsuleId: "", data: null })
+                  }
+                />
+              </FlexBox>
 
-            <Message disabled value={capsule?.data?.content}></Message>
-            <From>
-              <strong>From.</strong>{" "}
-              {isExist(capsule?.data?.authorNickname)
-                ? capsule?.data?.authorNickname
-                : "익명의 누군가"}
-            </From>
-            <BigButton
-              onClick={goToReply(capsule.capsuleId)}
-              style={{ marginTop: "20px" }}
-            >
-              답장하기
-            </BigButton>
-          </Letter>
+              <Message disabled value={capsule?.data?.content}></Message>
+              <From>
+                <strong>From.</strong>{" "}
+                {isExist(capsule?.data?.authorNickname)
+                  ? capsule?.data?.authorNickname
+                  : "익명의 누군가"}
+              </From>
+              <BigButton
+                onClick={goToReply(capsule.capsuleId)}
+                style={{ marginTop: "20px" }}
+              >
+                답장하기
+              </BigButton>
+            </Letter>
+          </>
         )}
       </AnimatePresence>
     </Layout>

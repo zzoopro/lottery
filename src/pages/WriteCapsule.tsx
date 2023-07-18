@@ -175,7 +175,7 @@ const WriteCapsule = () => {
         const capsuleId = searchParams.get("capsuleId");
         response = await replyCapsule(jarId!, capsuleId!, payload);
       }
-      if (response?.status >= 300)
+      if (response?.status! >= 300)
         return setPopup(showPopup({ content: response?.message ?? "" }));
       setPopup(
         showPopup({
@@ -183,7 +183,7 @@ const WriteCapsule = () => {
             writeType === "send"
               ? "캡슐이 잘 전달됬어요."
               : "답장이 잘 전달됬어요.",
-          onConfirm: () => navigate(-1, { replace: true }),
+          onConfirm: () => navigate(-1),
         })
       );
     }

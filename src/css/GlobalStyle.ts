@@ -12,7 +12,14 @@ ${reset}
 
 body {    
   background-color: #f1f1f1;  
+  
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none
 }
+
+
 
 `;
 

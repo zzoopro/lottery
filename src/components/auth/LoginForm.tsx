@@ -2,12 +2,13 @@ import { styled } from "styled-components";
 import Input from "./Input";
 import { FieldValues, useForm } from "react-hook-form";
 import BigButton from "../common/UI/BigButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import * as API from "../../api/api";
 
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { popupAtom, showPopup } from "../../atom/atom";
 import { AUTH } from "../../utils/constants";
+import { useEffect } from "react";
 
 const Form = styled.form`
   display: flex;
@@ -36,7 +37,9 @@ interface ResponseData {
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const [qs, setQs] = useSearchParams();
   const [popup, setPopup] = useRecoilState(popupAtom);
+
   const {
     register,
     handleSubmit,
@@ -50,6 +53,9 @@ const LoginForm = () => {
       return setPopup(showPopup({ content: response.message }));
     }
     localStorage.setItem(AUTH, response.data.token);
+    if (qs.get("jarId")) {
+      return navigate(`/guest/write/${qs.get("jarId")}/send/setting`);
+    }
     navigate(`/master/capsule-box/${response.data.jarId}`, { replace: true });
   };
 

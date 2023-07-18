@@ -5,8 +5,8 @@ import Logo from "../components/common/UI/Logo";
 import Box from "../components/common/UI/Box";
 import { styled } from "styled-components";
 import FlexBox from "../components/common/UI/FlexBox";
-import { Link } from "react-router-dom";
-import React from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import React, { useCallback } from "react";
 
 const Em = styled.span`
   color: #fff;
@@ -27,7 +27,7 @@ const Span = styled.span`
   line-height: 167.023%;
 `;
 
-const LinkTo = styled(Link)`
+const Button = styled.div`
   color: #fff;
   font-size: 20px;
   font-family: Noto Sans Kr;
@@ -38,6 +38,13 @@ const LinkTo = styled(Link)`
 `;
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [qs, setQs] = useSearchParams();
+  const goToSignup = useCallback(() => {
+    if (qs.get("jarId")) return navigate(`/signup?jarId=${qs.get("jarId")}`);
+    navigate("/signup");
+  }, [qs]);
+
   return (
     <Layout bgColor="dark">
       <Scaffold style={{ justifyContent: "space-between" }}>
@@ -57,7 +64,7 @@ const Login = () => {
             }}
           >
             <Span>편지를 받아보고 싶나요?</Span>
-            <LinkTo to="/signup">회원가입</LinkTo>
+            <Button onClick={goToSignup}>회원가입</Button>
           </FlexBox>
         </FlexBox>
       </Scaffold>

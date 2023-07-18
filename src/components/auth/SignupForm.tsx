@@ -3,7 +3,7 @@ import Input from "./Input";
 import * as API from "../../api/api";
 import { FieldValues, useForm } from "react-hook-form";
 import BigButton from "../common/UI/BigButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { popupAtom, showPopup } from "../../atom/atom";
 import { IResponse } from "../../utils/functions";
@@ -43,6 +43,7 @@ export interface ISignup {
 
 const SignupForm = () => {
   const navigate = useNavigate();
+  const [qs, setQs] = useSearchParams();
   const [popup, setPopup] = useRecoilState(popupAtom);
 
   const {
@@ -65,10 +66,14 @@ const SignupForm = () => {
     if (response.status !== 200) {
       return setPopup(showPopup());
     }
+    const jarId = qs.get("jarId");
     setPopup(
       showPopup({
         content: "회원가입에 성공하였습니다.",
-        onConfirm: () => navigate("/login", { replace: true }),
+        onConfirm: () =>
+          navigate(jarId ? `/login?jarId=${jarId}` : "/login", {
+            replace: true,
+          }),
       })
     );
   };
