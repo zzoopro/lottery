@@ -313,6 +313,10 @@ const Home = () => {
       ): MouseEventHandler & TouchEventHandler =>
       (event) => {
         if (isDragging.current) return;
+        if (!capsuleId)
+          return setPopup(
+            showPopup({ content: "읽을 수 있는 캡슐이 없습니다." })
+          );
         if (isEmpty(jar?.capsules) || jar?.capsules.length === 0)
           return setPopup(
             showPopup({ content: "받은 캡슐이 없습니다.", withDimmed: true })
