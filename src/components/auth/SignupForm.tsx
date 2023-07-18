@@ -63,8 +63,8 @@ const SignupForm = () => {
   const onSubmit = async (data: FieldValues) => {
     data["coin"] = 5;
     const response = await API.signup(data as ISignup);
-    if (response.status !== 200) {
-      return setPopup(showPopup());
+    if (response.status > 300) {
+      return setPopup(showPopup({ content: response.message }));
     }
     const jarId = qs.get("jarId");
     setPopup(

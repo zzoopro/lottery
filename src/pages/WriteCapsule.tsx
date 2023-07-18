@@ -12,7 +12,7 @@ import { AnimatePresence, Variants, motion } from "framer-motion";
 import { IJar, IUser } from "../utils/type";
 import { useQuery } from "@tanstack/react-query";
 import { capsules, replyCapsule, sendCapsule, user } from "../api/api";
-import { IResponse, isExist } from "../utils/functions";
+import { IResponse, isEmpty, isExist } from "../utils/functions";
 import { popupAtom, showPopup } from "../atom/atom";
 import { useRecoilState } from "recoil";
 
@@ -150,6 +150,7 @@ const WriteCapsule = () => {
     queryKey: ["user"],
     queryFn: () => user().then((response) => response.data),
   });
+
   const { data: jar } = useQuery<IJar>({
     queryKey: ["jar"],
     queryFn: () => capsules(jarId ?? "").then((response) => response.data),
@@ -183,7 +184,7 @@ const WriteCapsule = () => {
             writeType === "send"
               ? "캡슐이 잘 전달됬어요."
               : "답장이 잘 전달됬어요.",
-          onConfirm: () => navigate(-1),
+          onConfirm: () => navigate(`/guest/capsule-box/${jarId}`),
         })
       );
     }
@@ -218,7 +219,7 @@ const WriteCapsule = () => {
                   userData?.nickname ? userData?.nickname : "익명의 누군가"
                 }
                 style={{ marginTop: "20px" }}
-                disabled={isExist(userData?.nickname)}
+                disabled={isEmpty(userData?.nickname)}
                 onChange={(e: any) =>
                   setPayload((payload) => ({
                     ...payload,

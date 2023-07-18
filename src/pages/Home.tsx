@@ -250,11 +250,11 @@ const Home = () => {
   const [capsule, setCapsule] = useState<CapsuleStatus>();
   const controls = useDragControls();
 
-  const { data: userData } = useQuery<IUser>({
+  const { data: userData, refetch: userRefetch } = useQuery<IUser>({
     queryKey: ["user"],
     queryFn: () => user().then((response) => response.data),
   });
-  const { data: jar } = useQuery<IJar>({
+  const { data: jar, refetch: jarRefetch } = useQuery<IJar>({
     queryKey: ["jar"],
     queryFn: () => capsules(jarId ?? "").then((response) => response.data),
   });
@@ -291,17 +291,19 @@ const Home = () => {
           numberOfButton: 2,
           confirmText: "로그인",
           rejectText: "그냥 쓸래요",
-          onConfirm: () => navigate("/login"),
+          onConfirm: () => navigate(`/login?jarId=${jarId}`),
         })
       );
     }
-  }, [userType, navigate, setPopup]);
+  }, [userType, navigate, setPopup, jarId]);
 
   const openCapsule = useCallback(async (capsuleId: string) => {
     const response: IResponse = await API.capsule(jarId!, capsuleId);
     if (response.status !== 200)
       return setPopup(showPopup({ content: response.message ?? "" }));
     setCapsule({ isOpen: true, capsuleId, data: response.data as any });
+    userRefetch();
+    jarRefetch();
   }, []);
 
   const onCapsuleClick = useCallback(
@@ -310,15 +312,18 @@ const Home = () => {
         openType: CapsuleOpenType
       ): MouseEventHandler & TouchEventHandler =>
       (event) => {
+        if (isDragging.current) return;
         if (isEmpty(jar?.capsules) || jar?.capsules.length === 0)
           return setPopup(
             showPopup({ content: "받은 캡슐이 없습니다.", withDimmed: true })
           );
-        if (isDragging.current) return;
-        if (openType === "random") return openCapsule(capsuleId);
-        setPopup(
+
+        return setPopup(
           showPopup({
-            content: "코인 2개가 소진돼요!\n선택한 편지를 읽어볼까요?",
+            content:
+              openType === "random"
+                ? `코인 1개가 소진돼요!\n랜덤으로 편지를 읽어볼까요?`
+                : `코인 2개가 소진돼요!\n선택한 편지를 읽어볼까요?`,
             numberOfButton: 2,
             confirmText: "읽을래요",
             rejectText: "아니요",
@@ -379,13 +384,20 @@ const Home = () => {
     );
   }, [navigate, userType, jarId]);
 
+  const goToMyCapsuleBox = useCallback(() => {
+    navigate(`/master/capsule-box/${userData?.jarId}`, { replace: true });
+  }, [navigate, userData]);
+
   return (
     <Layout bgColor="blue">
       <Main>
+        {isExist(userData) && jar?.userNickname !== userData?.nickname && (
+          <h2 onClick={goToMyCapsuleBox}>내 뽑기통으로</h2>
+        )}
         <Title>{jar?.userNickname}의 뽑기통</Title>
         <CoinCount>
           <span>COIN POINT</span>
-          <span>{jar?.coin.toString().padStart(4, "0")}</span>
+          <span>{userData?.coin.toString().padStart(4, "0")}</span>
         </CoinCount>
         <CapsuleBox src="/images/capsule-box.png" />
         <RandomButton
@@ -396,30 +408,45 @@ const Home = () => {
           src="/images/capsule-box-button.png"
           onClick={onCapsuleClick(
             randomItem<string>(
-              jar?.capsules.map((capsule) => capsule.capsuleId)
+              jar?.capsules
+                .filter((capsule) => !capsule.read)
+                .map((capsule) => capsule.capsuleId)
             ),
             "random"
           )}
         />
 
         <Machine ref={machineRef}>
-          {jar?.capsules?.map((item, i) => (
-            <Capsule
-              key={i}
-              onClick={onCapsuleClick(String(item.capsuleId), "choice")}
-              drag
-              onDragStart={onDragStart as any}
-              onDragEnd={onDragEnd as any}
-              dragConstraints={machineRef}
-              dragElastic={0}
-              bgcolor={item.color}
-              whileTap={{ scale: 1.2, zIndex: 2 }}
-              whileDrag={{ scale: 1.2, zIndex: 2 }}
-              dragControls={controls}
-            >
-              <CapsuleLight src="/images/capsule-light.png" />
-            </Capsule>
-          ))}
+          {jar?.capsules?.map((item, i) => {
+            const capsule = jar?.capsules.find(
+              (capsule) => capsule.capsuleId === item.capsuleId
+            );
+
+            return (
+              <Capsule
+                key={i}
+                onClick={
+                  capsule && capsule?.read
+                    ? () => {}
+                    : onCapsuleClick(String(item.capsuleId), "choice")
+                }
+                style={{
+                  filter: item.read ? "grayscale(80%)" : "",
+                }}
+                drag
+                onDragStart={onDragStart as any}
+                onDragEnd={onDragEnd as any}
+                dragConstraints={machineRef}
+                dragElastic={0}
+                bgcolor={item.color}
+                whileTap={{ scale: 1.2, zIndex: 2 }}
+                whileDrag={{ scale: 1.2, zIndex: 2 }}
+                dragControls={controls}
+              >
+                <CapsuleLight src="/images/capsule-light.png" />
+              </Capsule>
+            );
+          })}
         </Machine>
       </Main>
 
