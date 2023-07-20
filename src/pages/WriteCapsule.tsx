@@ -5,7 +5,7 @@ import Input from "../components/auth/Input";
 import Scafford from "../components/common/UI/Scaffold";
 import FlexBox from "../components/common/UI/FlexBox";
 import { theme } from "../css/theme";
-import { useCallback, useEffect, useState } from "react";
+import { MouseEventHandler, useCallback, useEffect, useState } from "react";
 import BigButton from "../components/common/UI/BigButton";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { AnimatePresence, Variants, motion } from "framer-motion";
@@ -199,9 +199,27 @@ const WriteCapsule = () => {
     payload,
   ]);
 
+  const onGobackClick = useCallback(() => {
+    if (step === "writing") {
+      return setPopup(
+        showPopup({
+          content: `잠깐!\n창을 닫으면 작성한 내용이 사라져요`,
+          rejectText: "그만쓰기",
+          confirmText: "이어쓰기",
+          onReject: () => navigate(-1),
+        })
+      );
+    }
+    navigate(-1);
+  }, [step]);
+
   return (
     <Layout bgColor="dark">
-      <Header goBack title={writeType === "send" ? "편지쓰기" : "답장하기"} />
+      <Header
+        goBack
+        onGobackClick={onGobackClick}
+        title={writeType === "send" ? "편지쓰기" : "답장하기"}
+      />
       <Scafford style={{ justifyContent: "space-between" }}>
         <AnimatePresence mode="sync">
           {step === "setting" && (

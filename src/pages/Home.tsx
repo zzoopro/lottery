@@ -193,7 +193,7 @@ const CoinCount = styled.strong`
 `;
 
 const CopyURL = styled(motion.div)`
-  position: fixed;
+  position: absolute;
   left: 50%;
   display: flex;
   justify-content: center;
@@ -287,20 +287,6 @@ const Home = () => {
       });
     }
   }, [jar]);
-
-  useEffect(() => {
-    if (userType === "guest" && !isLogined()) {
-      setPopup(
-        showPopup({
-          content: `로그인을 하고 편지를 쓰면\n코인 1개를 받을 수 있어요!`,
-          numberOfButton: 2,
-          confirmText: "로그인",
-          rejectText: "그냥 쓸래요",
-          onConfirm: () => navigate(`/login?jarId=${jarId}`),
-        })
-      );
-    }
-  }, [userType, navigate, setPopup, jarId]);
 
   const openCapsule = useCallback(async (capsuleId: string) => {
     const response: IResponse = await API.capsule(jarId!, capsuleId);

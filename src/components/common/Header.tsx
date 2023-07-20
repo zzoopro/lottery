@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEventHandler } from "react";
 import { styled } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
@@ -48,14 +48,21 @@ const Title = styled.h2`
 interface HeaderProps {
   title: string;
   goBack: boolean;
+  onGobackClick?: Function;
 }
 
-const Header = ({ title, goBack = true }: HeaderProps) => {
+const Header = ({ title, goBack = true, onGobackClick }: HeaderProps) => {
   const navigate = useNavigate();
   return (
     <HeaderTag>
       {goBack && (
-        <GoBackButton onClick={() => navigate(-1)}>
+        <GoBackButton
+          onClick={
+            onGobackClick
+              ? (onGobackClick as MouseEventHandler)
+              : () => navigate(-1)
+          }
+        >
           <GoBack icon={faAngleLeft} />
         </GoBackButton>
       )}
