@@ -9,6 +9,7 @@ import { styled } from "styled-components";
 import {
   MouseEvent,
   MouseEventHandler,
+  ReactNode,
   TouchEventHandler,
   useCallback,
   useEffect,
@@ -36,6 +37,8 @@ import {
 import * as API from "../api/api";
 import FlexBox from "../components/common/UI/FlexBox";
 import Dimmed from "../components/common/Dimmed";
+import SpeechBubble from "../components/common/NewbieIntro";
+import NewbieIntro from "../components/common/NewbieIntro";
 
 const Img = styled.img`
   user-select: none;
@@ -211,7 +214,7 @@ const DimmedBg = styled.div`
   position: fixed;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   z-index: 20;
 `;
 
@@ -248,6 +251,7 @@ const Home = () => {
   const isDragging = useRef<boolean>(false);
 
   const [capsule, setCapsule] = useState<CapsuleStatus>();
+
   const controls = useDragControls();
 
   const { data: userData, refetch: userRefetch } = useQuery<IUser>({
@@ -278,7 +282,8 @@ const Home = () => {
 
         itemRef.style.left = `${randomX}px`;
         itemRef.style.top = `${randomY}px`;
-        itemRef.style.backgroundColor = `${item.color}`;
+        if (item.read) itemRef.style.backgroundColor = "#D9D9D9";
+        if (!item.read) itemRef.style.backgroundColor = `${item.color}`;
       });
     }
   }, [jar]);
@@ -434,9 +439,6 @@ const Home = () => {
                     ? () => {}
                     : onCapsuleClick(String(item.capsuleId), "choice")
                 }
-                style={{
-                  filter: item.read ? "grayscale(80%)" : "",
-                }}
                 drag
                 onDragStart={onDragStart as any}
                 onDragEnd={onDragEnd as any}
@@ -461,48 +463,47 @@ const Home = () => {
         <FontAwesomeIcon icon={userType === "master" ? faLink : faEnvelope} />
       </CopyURL>
 
+      {capsule?.isOpen && <DimmedBg />}
+      <NewbieIntro user={userData!} />
       <AnimatePresence>
         {capsule?.isOpen && (
-          <>
-            <DimmedBg />
-            <Letter
-              variants={letterVariants}
-              transition={{ type: "tween", duration: 0.2 }}
-              initial="initial"
-              animate="animate"
-              exit="exit"
+          <Letter
+            variants={letterVariants}
+            transition={{ type: "tween", duration: 0.2 }}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <FlexBox
+              direction="row"
+              style={{ justifyContent: "space-between" }}
             >
-              <FlexBox
-                direction="row"
-                style={{ justifyContent: "space-between" }}
-              >
-                <To>
-                  <strong>To.</strong> {jar?.userNickname}
-                </To>
-                <FontAwesomeIcon
-                  icon={faXmark}
-                  style={{ height: 30 }}
-                  onClick={() =>
-                    setCapsule({ isOpen: false, capsuleId: "", data: null })
-                  }
-                />
-              </FlexBox>
+              <To>
+                <strong>To.</strong> {jar?.userNickname}
+              </To>
+              <FontAwesomeIcon
+                icon={faXmark}
+                style={{ height: 30 }}
+                onClick={() =>
+                  setCapsule({ isOpen: false, capsuleId: "", data: null })
+                }
+              />
+            </FlexBox>
 
-              <Message disabled value={capsule?.data?.content}></Message>
-              <From>
-                <strong>From.</strong>{" "}
-                {isExist(capsule?.data?.authorNickname)
-                  ? capsule?.data?.authorNickname
-                  : "익명의 누군가"}
-              </From>
-              <BigButton
-                onClick={goToReply(capsule.capsuleId)}
-                style={{ marginTop: "20px" }}
-              >
-                답장하기
-              </BigButton>
-            </Letter>
-          </>
+            <Message disabled value={capsule?.data?.content}></Message>
+            <From>
+              <strong>From.</strong>{" "}
+              {isExist(capsule?.data?.authorNickname)
+                ? capsule?.data?.authorNickname
+                : "익명의 누군가"}
+            </From>
+            <BigButton
+              onClick={goToReply(capsule.capsuleId)}
+              style={{ marginTop: "20px" }}
+            >
+              답장하기
+            </BigButton>
+          </Letter>
         )}
       </AnimatePresence>
     </Layout>

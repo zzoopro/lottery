@@ -83,9 +83,13 @@ const SignupForm = () => {
       <Label htmlFor="userId">아이디</Label>
       <Input
         id="userId"
-        placeholder="영문을 사용해 4 ~ 12자"
+        placeholder="영문, 숫자를 사용해 4 ~ 12자"
         register={register("userId", {
           required: true,
+          pattern: {
+            value: /^[A-Za-z0-9]+$/,
+            message: "한글을 포함할 수 없습니다.",
+          },
           minLength: { value: 4, message: "최소 4글자를 입력해주세요." },
           maxLength: {
             value: 12,
@@ -98,9 +102,13 @@ const SignupForm = () => {
       <Label htmlFor="nickname">닉네임</Label>
       <Input
         id="nickname"
-        placeholder="한글, 영문을 사용해 최대 6자"
+        placeholder="영문, 한글을 사용해 최대 6자"
         register={register("nickname", {
           required: true,
+          pattern: {
+            value: /^[A-Za-z가-힣]+$/,
+            message: "닉네임을 확인해 주세요.",
+          },
           minLength: { value: 2, message: "최소 2글자를 입력해주세요." },
           maxLength: {
             value: 6,
@@ -117,6 +125,10 @@ const SignupForm = () => {
         placeholder="영문, 숫자를 사용해 최대 4~12자"
         register={register("password", {
           required: true,
+          pattern: {
+            value: /^[A-Za-z0-9]+$/,
+            message: "한글을 포함할 수 없습니다.",
+          },
           minLength: { value: 4, message: "최소 4글자를 입력해주세요." },
           maxLength: {
             value: 12,
@@ -141,9 +153,13 @@ const SignupForm = () => {
             value: 11,
             message: "11자리 핸드폰번호를 입력해 주세요.",
           },
+          pattern: {
+            value: /^010[0-9]{4}[0-9]{4}$/,
+            message: "핸드폰 번호를 확인해 주세요.",
+          },
         })}
       />
-      <ErrorText>{errors.phone?.message as any}</ErrorText>
+      <ErrorText>{errors.phoneNumber?.message as any}</ErrorText>
       <BigButton style={{ marginBottom: "20px" }}>회원가입</BigButton>
     </Form>
   );
