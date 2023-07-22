@@ -18,12 +18,17 @@ import {
 } from "react";
 import Layout from "../components/common/Layout";
 
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  NavigateFunction,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import BigButton from "../components/common/UI/BigButton";
 import { useRecoilState } from "recoil";
 import { popupAtom, showPopup } from "../atom/atom";
 import { CapsuleOpenType, ICapsuleDetail, IJar, IUser } from "../utils/type";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { capsules, user } from "../api/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faEnvelope, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -76,6 +81,12 @@ const Capsule = styled(motion.div)<{ bgcolor: string }>`
   aspect-ratio: 1 / 1;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.2);
   border: 2px solid #263ca6;
+`;
+
+const Line = styled.div`
+  width: 100%;
+  height: 2px;
+  background-color: #263ca6;
 `;
 
 const CapsuleBox = styled(Img)`
@@ -192,6 +203,28 @@ const CoinCount = styled.strong`
   gap: 5px;
 `;
 
+const ToLogin = styled(Link)`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #fff;
+  font-family: "Noto Sans Kr";
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+`;
+
+const MyName = styled.strong`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #fff;
+  font-family: "Noto Sans Kr";
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+`;
+
 const CopyURL = styled(motion.div)`
   position: absolute;
   left: 50%;
@@ -205,6 +238,7 @@ const CopyURL = styled(motion.div)`
   color: #fff;
   transform: translateX(-50%);
   z-index: 50;
+  cursor: pointer;
   svg {
     margin-left: 5px;
   }
@@ -243,6 +277,7 @@ interface CapsuleStatus {
 
 const Home = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { userType, jarId } = useParams();
   const [popup, setPopup] = useRecoilState(popupAtom);
@@ -282,7 +317,8 @@ const Home = () => {
 
         itemRef.style.left = `${randomX}px`;
         itemRef.style.top = `${randomY}px`;
-        if (item.read) itemRef.style.backgroundColor = "#D9D9D9";
+        if (item.read || (userType === "guest" && !item.public))
+          itemRef.style.backgroundColor = "#D9D9D9";
         if (!item.read) itemRef.style.backgroundColor = `${item.color}`;
       });
     }
@@ -312,6 +348,7 @@ const Home = () => {
           return setPopup(
             showPopup({ content: "받은 캡슐이 없습니다.", withDimmed: true })
           );
+        if (!isLogined()) return openCapsule(capsuleId);
 
         return setPopup(
           showPopup({
@@ -352,7 +389,7 @@ const Home = () => {
       .then(() => {
         setPopup(
           showPopup({
-            content: `링크가 복사되었습니다.\n공유하면 편지를 받을 수 있습니다.`,
+            content: `링크가 복사되었습니다.\n친구에게 공유해 편지를 받아보세요.`,
             withDimmed: true,
           })
         );
@@ -379,21 +416,39 @@ const Home = () => {
     );
   }, [navigate, userType, jarId]);
 
+  const asyncNav = useCallback(
+    (url: string, navigate: NavigateFunction): Promise<any> => {
+      navigate(url);
+      return new Promise((resolve) => {
+        queryClient.removeQueries();
+        resolve("good");
+      });
+    },
+    [queryClient]
+  );
+
   const goToMyCapsuleBox = useCallback(() => {
-    navigate(`/master/capsule-box/${userData?.jarId}`, { replace: true });
-  }, [navigate, userData]);
+    asyncNav(`/master/capsule-box/${userData?.jarId}`, navigate);
+  }, [asyncNav, navigate, userData]);
 
   return (
     <Layout bgColor="blue">
       <Main>
-        {isExist(userData) && jar?.userNickname !== userData?.nickname && (
-          <h2 onClick={goToMyCapsuleBox}>내 뽑기통으로</h2>
+        {isExist(userData) && (
+          <MyName onClick={() => goToMyCapsuleBox()}>
+            {userData?.nickname} 님
+          </MyName>
         )}
         <Title>{jar?.userNickname}의 뽑기통</Title>
-        <CoinCount>
-          <span>COIN POINT</span>
-          <span>{userData?.coin.toString().padStart(4, "0")}</span>
-        </CoinCount>
+        {isLogined() ? (
+          <CoinCount>
+            <span>COIN POINT</span>
+            <span>{userData?.coin.toString().padStart(4, "0")}</span>
+          </CoinCount>
+        ) : (
+          <ToLogin to="/login">로그인</ToLogin>
+        )}
+
         <CapsuleBox src="/images/capsule-box.png" />
         <RandomButton
           draggable={false}
@@ -421,7 +476,8 @@ const Home = () => {
               <Capsule
                 key={i}
                 onClick={
-                  capsule && capsule?.read
+                  capsule &&
+                  (capsule?.read || (userType === "guest" && !item.public))
                     ? () => {}
                     : onCapsuleClick(String(item.capsuleId), "choice")
                 }
@@ -435,6 +491,7 @@ const Home = () => {
                 whileDrag={{ scale: 1.2, zIndex: 2 }}
                 dragControls={controls}
               >
+                <Line />
                 <CapsuleLight src="/images/capsule-light.png" />
               </Capsule>
             );
@@ -483,12 +540,14 @@ const Home = () => {
                 ? capsule?.data?.authorNickname
                 : "익명의 누군가"}
             </From>
-            <BigButton
-              onClick={goToReply(capsule.capsuleId)}
-              style={{ marginTop: "20px" }}
-            >
-              답장하기
-            </BigButton>
+            {isExist(capsule?.data?.authorNickname!) && (
+              <BigButton
+                onClick={goToReply(capsule.capsuleId)}
+                style={{ marginTop: "20px" }}
+              >
+                답장하기
+              </BigButton>
+            )}
           </Letter>
         )}
       </AnimatePresence>

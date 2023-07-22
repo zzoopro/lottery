@@ -30,11 +30,6 @@ export interface ILogin {
   password: string;
 }
 
-interface ResponseData {
-  jarId: string;
-  token: string;
-}
-
 const LoginForm = () => {
   const navigate = useNavigate();
   const [qs, setQs] = useSearchParams();
@@ -54,7 +49,7 @@ const LoginForm = () => {
     }
     localStorage.setItem(AUTH, response.data.token);
     if (qs.get("jarId")) {
-      return navigate(`/guest/write/${qs.get("jarId")}/send/setting`);
+      return navigate(`/master/write/${qs.get("jarId")}/send/setting`);
     }
     navigate(`/master/capsule-box/${response.data.jarId}`, { replace: true });
   };
