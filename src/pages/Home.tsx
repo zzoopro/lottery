@@ -26,7 +26,7 @@ import {
 } from "react-router-dom";
 import BigButton from "../components/common/UI/BigButton";
 import { useRecoilState } from "recoil";
-import { popupAtom, showPopup } from "../atom/atom";
+import { isNewbieAtom, popupAtom, showPopup } from "../atom/atom";
 import { CapsuleOpenType, ICapsuleDetail, IJar, IUser } from "../utils/type";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { capsules, user } from "../api/api";
@@ -245,9 +245,9 @@ const CopyURL = styled(motion.div)`
 `;
 
 const DimmedBg = styled.div`
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
+  position: absolute;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 20;
 `;
@@ -286,6 +286,7 @@ const Home = () => {
   const isDragging = useRef<boolean>(false);
 
   const [capsule, setCapsule] = useState<CapsuleStatus>();
+  const [isNewbie, setIsNewbie] = useRecoilState(isNewbieAtom);
 
   const controls = useDragControls();
 
@@ -324,10 +325,17 @@ const Home = () => {
     }
   }, [jar]);
 
+  useEffect(() => {
+    if (!isLogined()) {
+      setIsNewbie(true);
+    }
+  }, []);
+
   const openCapsule = useCallback(async (capsuleId: string) => {
     const response: IResponse = await API.capsule(jarId!, capsuleId);
     if (response.status !== 200)
       return setPopup(showPopup({ content: response.message ?? "" }));
+
     setCapsule({ isOpen: true, capsuleId, data: response.data as any });
     userRefetch();
     jarRefetch();
@@ -476,8 +484,7 @@ const Home = () => {
               <Capsule
                 key={i}
                 onClick={
-                  capsule &&
-                  (capsule?.read || (userType === "guest" && !item.public))
+                  capsule && capsule?.read
                     ? () => {}
                     : onCapsuleClick(String(item.capsuleId), "choice")
                 }
@@ -497,6 +504,9 @@ const Home = () => {
             );
           })}
         </Machine>
+        {(capsule?.isOpen || isNewbie) && <DimmedBg />}
+
+        <AnimatePresence>{isNewbie && <NewbieIntro />}</AnimatePresence>
       </Main>
 
       <CopyURL onClick={userType === "master" ? copyURL : goToWriting}>
@@ -506,8 +516,6 @@ const Home = () => {
         <FontAwesomeIcon icon={userType === "master" ? faLink : faEnvelope} />
       </CopyURL>
 
-      {capsule?.isOpen && <DimmedBg />}
-      <NewbieIntro user={userData!} />
       <AnimatePresence>
         {capsule?.isOpen && (
           <Letter

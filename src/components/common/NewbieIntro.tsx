@@ -1,80 +1,85 @@
-import { Variants, motion } from "framer-motion";
+import { AnimatePresence, Variants, motion } from "framer-motion";
 
 import { styled } from "styled-components";
-import { IUser } from "../../utils/type";
-import { MouseEventHandler, useEffect, useState } from "react";
-import Dimmed from "./Dimmed";
+
+import { Dispatch, MouseEventHandler, SetStateAction, useState } from "react";
+import { useRecoilState } from "recoil";
+import { isNewbieAtom } from "../../atom/atom";
 
 const Bubble = styled(motion.div)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 350px;
-  height: 120px;
-  max-width: 90%;
-  border-radius: 12px;
-  border: 1px solid #000;
-  background: #fff;
-  z-index: 600;
+  position: absolute;
+  height: 100%;
+  width: 100%;
 
-  color: #000;
-  text-align: center;
-  font-family: Noto Sans KR;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 100%; /* 20px */
+  overflow: hidden;
+  z-index: 600;
 `;
 
-const DimmedBg = styled.div`
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 20;
+const Img = styled(motion.img)`
+  width: 100%;
+  object-fit: contain;
 `;
 
 interface NewbieIntroProps {
-  user: IUser;
+  setIntro: Dispatch<SetStateAction<boolean>>;
 }
-const NewbieIntro = ({ user }: NewbieIntroProps) => {
-  const [step, setStep] = useState<number>(0);
 
-  const onClick =
-    (step: number): MouseEventHandler =>
-    () => {
-      if (step < 4) {
-        setStep((old) => old + 1);
-      } else {
-        setStep(0);
-      }
-    };
+const imgVariants = {
+  enter: {
+    x: "100%",
+  },
+  center: {
+    x: 0,
+  },
+  exit: {
+    x: "-100%",
+  },
+};
 
-  const content = (step: number) => {
-    switch (step) {
-      case 1:
-        return <span>STEP 1</span>;
-      case 2:
-        return <span>STEP 2</span>;
-      case 3:
-        return <span>STEP 3</span>;
-      default:
-        return <span>STEP 4</span>;
-    }
+const bubbleVariants = {
+  enter: {
+    y: "100%",
+  },
+  center: {
+    y: 0,
+  },
+  exit: {
+    y: "100%",
+  },
+};
+
+const NewbieIntro = () => {
+  const [isNewbie, setIsNewbie] = useRecoilState(isNewbieAtom);
+  const [step, setStep] = useState<number>(1);
+
+  const nextStep = () => {
+    if (step < 4) return setStep((old) => old + 1);
+    setIsNewbie(false);
   };
 
-  useEffect(() => {
-    // setStep(1);
-  }, []);
   return (
-    <>
-      {step > 0 && (
-        <>
-          <DimmedBg />
-          <Bubble onClick={onClick(step)}>{content(step)}</Bubble>
-        </>
-      )}
-    </>
+    <Bubble
+      variants={bubbleVariants}
+      initial="enter"
+      animate="center"
+      exit="exit"
+      onClick={nextStep}
+    >
+      <AnimatePresence mode="popLayout" initial={false}>
+        <Img
+          transition={{
+            x: { type: "spring", stiffness: 300, damping: 30 },
+            opacity: { duration: 0.2 },
+          }}
+          key={step}
+          variants={imgVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          src={`/images/intro-0${step}.jpg`}
+        />
+      </AnimatePresence>
+    </Bubble>
   );
 };
 

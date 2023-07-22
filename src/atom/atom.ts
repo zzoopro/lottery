@@ -52,3 +52,8 @@ export const osAtom = atom<OS>({
   key: "osCheck",
   default: "web",
 });
+
+export const isNewbieAtom = atom<boolean>({
+  key: "isNewbie",
+  default: false,
+});
