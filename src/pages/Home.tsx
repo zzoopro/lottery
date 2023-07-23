@@ -249,7 +249,8 @@ const DimmedBg = styled.div`
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
-  z-index: 20;
+  z-index: 51;
+  pointer-events: none;
 `;
 
 type DragEventHandlerType = (
@@ -414,7 +415,7 @@ const Home = () => {
     (capsuleId: string): MouseEventHandler =>
       () => {
         navigate(
-          `/${userType}/write/${capsule?.data?.jarId}/reply/setting?capsuleId=${capsuleId}`
+          `/${userType}/write/${capsule?.data?.jarId}/reply/setting?capsuleId=${capsuleId}&recipient=${capsule?.data?.authorNickname}`
         );
       },
     [navigate, jarId, userType, capsule]
@@ -441,6 +442,8 @@ const Home = () => {
   }, [setPopup]);
 
   const goToWriting = useCallback(() => {
+    if (isLogined())
+      return navigate(`/${userType}/write/${jarId}/send/setting`);
     setPopup(
       showPopup({
         numberOfButton: 2,
@@ -570,14 +573,15 @@ const Home = () => {
                 ? capsule?.data?.authorNickname
                 : "익명의 누군가"}
             </From>
-            {isExist(capsule?.data?.authorNickname!) && (
-              <BigButton
-                onClick={goToReply(capsule.capsuleId)}
-                style={{ marginTop: "20px" }}
-              >
-                답장하기
-              </BigButton>
-            )}
+            {isExist(capsule?.data?.authorNickname!) &&
+              userType !== "guest" && (
+                <BigButton
+                  onClick={goToReply(capsule.capsuleId)}
+                  style={{ marginTop: "20px" }}
+                >
+                  답장하기
+                </BigButton>
+              )}
           </Letter>
         )}
       </AnimatePresence>

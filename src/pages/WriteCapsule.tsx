@@ -5,7 +5,13 @@ import Input from "../components/auth/Input";
 import Scafford from "../components/common/UI/Scaffold";
 import FlexBox from "../components/common/UI/FlexBox";
 import { theme } from "../css/theme";
-import { MouseEventHandler, useCallback, useEffect, useState } from "react";
+import {
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import BigButton from "../components/common/UI/BigButton";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { AnimatePresence, Variants, motion } from "framer-motion";
@@ -146,6 +152,8 @@ const WriteCapsule = () => {
   const [popup, setPopup] = useRecoilState(popupAtom);
   const navigate = useNavigate();
 
+  const recipient = useRef(searchParams.get("recipient"));
+
   const { data: userData } = useQuery<IUser>({
     queryKey: ["user"],
     queryFn: () => user().then((response) => response.data),
@@ -170,9 +178,9 @@ const WriteCapsule = () => {
     }
     if (step === "writing") {
       let response: IResponse | undefined;
+      if (userData?.nickname) payload["authorNickname"] = userData?.nickname!;
       if (writeType === "send") response = await sendCapsule(jarId!, payload);
       if (writeType === "reply") {
-        payload["authorNickname"] = userData?.nickname!;
         const capsuleId = searchParams.get("capsuleId");
         response = await replyCapsule(jarId!, capsuleId!, payload);
       }
@@ -204,6 +212,7 @@ const WriteCapsule = () => {
       return setPopup(
         showPopup({
           content: `잠깐!\n창을 닫으면 작성한 내용이 사라져요`,
+          numberOfButton: 2,
           rejectText: "그만쓰기",
           confirmText: "이어쓰기",
           onReject: () => navigate(-1),
@@ -237,7 +246,7 @@ const WriteCapsule = () => {
                   userData?.nickname ? userData?.nickname : "익명의 누군가"
                 }
                 style={{ marginTop: "20px" }}
-                disabled={isEmpty(userData?.nickname)}
+                disabled={isExist(userData?.nickname!)}
                 onChange={(e: any) =>
                   setPayload((payload) => ({
                     ...payload,
@@ -295,7 +304,10 @@ const WriteCapsule = () => {
               animate="animate"
               exit="exit"
             >
-              <H2>TO. {jar?.userNickname}</H2>
+              <H2>
+                TO.{" "}
+                {writeType === "send" ? jar?.userNickname : recipient.current}
+              </H2>
               <TextArea
                 placeholder="내용을 적어주세요. 다른 사람에게 상처를 주는 말은 자제해주세요."
                 onChange={(e: any) =>
