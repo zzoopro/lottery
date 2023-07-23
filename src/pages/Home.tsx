@@ -319,9 +319,12 @@ const Home = () => {
 
         itemRef.style.left = `${randomX}px`;
         itemRef.style.top = `${randomY}px`;
-        if (item.read || (userType === "guest" && !item.public))
+
+        itemRef.style.backgroundColor = `${item.color}`;
+        if (item.read && userType === "master")
           itemRef.style.backgroundColor = "#D9D9D9";
-        if (!item.read) itemRef.style.backgroundColor = `${item.color}`;
+        if (userType === "guest" && !item.public)
+          itemRef.style.backgroundColor = "#D9D9D9";
       });
     }
   }, [jar]);
