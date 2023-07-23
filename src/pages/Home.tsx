@@ -362,15 +362,14 @@ const Home = () => {
     (capsuleId: string): MouseEventHandler & TouchEventHandler =>
       (event) => {
         if (isDragging.current) return;
-        if (!capsuleId)
-          return setPopup(
-            showPopup({ content: "읽을 수 있는 캡슐이 없습니다." })
-          );
         if (isEmpty(jar?.capsules) || jar?.capsules.length === 0)
           return setPopup(
             showPopup({ content: "받은 캡슐이 없습니다.", withDimmed: true })
           );
-        if (!isLogined()) return openCapsule(capsuleId);
+        if (!capsuleId)
+          return setPopup(showPopup({ content: "비정상적인 캡슐입니다." }));
+
+        if (userType === "guest") return openCapsule(capsuleId);
 
         return setPopup(
           showPopup({
@@ -390,8 +389,9 @@ const Home = () => {
       if (isDragging.current) return;
       if (isEmpty(jar?.capsules) || jar?.capsules.length === 0)
         return setPopup(
-          showPopup({ content: "받은 캡슐이 없습니다.", withDimmed: true })
+          showPopup({ content: "캡슐이 없습니다.", withDimmed: true })
         );
+      if (userType === "guest") return openRandomCapsule();
 
       return setPopup(
         showPopup({
