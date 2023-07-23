@@ -94,3 +94,9 @@ export const capsule = async (jarId: string, capsuleId: string) => {
     .then((response) => response.json())
     .catch((error: Error) => ErrNetwork(error));
 };
+
+export const randomCapsule = async (jarId: string) => {
+  return await FetchInstance.get(`${SERVER_URL}/${JAR}/${jarId}/random`)
+    .then((response) => response.json())
+    .catch((error: Error) => ErrNetwork(error));
+};

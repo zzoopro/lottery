@@ -333,6 +333,7 @@ const Home = () => {
 
   const openCapsule = useCallback(async (capsuleId: string) => {
     const response: IResponse = await API.capsule(jarId!, capsuleId);
+
     if (response.status !== 200)
       return setPopup(showPopup({ content: response.message ?? "" }));
 
@@ -341,11 +342,23 @@ const Home = () => {
     jarRefetch();
   }, []);
 
+  const openRandomCapsule = useCallback(async () => {
+    const response: IResponse = await API.randomCapsule(jarId!);
+
+    if (response.status !== 200)
+      return setPopup(showPopup({ content: response.message ?? "" }));
+
+    setCapsule({
+      isOpen: true,
+      capsuleId: response.data?.capsuleId as string,
+      data: response.data as any,
+    });
+    userRefetch();
+    jarRefetch();
+  }, []);
+
   const onCapsuleClick = useCallback(
-    (
-        capsuleId: string,
-        openType: CapsuleOpenType
-      ): MouseEventHandler & TouchEventHandler =>
+    (capsuleId: string): MouseEventHandler & TouchEventHandler =>
       (event) => {
         if (isDragging.current) return;
         if (!capsuleId)
@@ -360,10 +373,7 @@ const Home = () => {
 
         return setPopup(
           showPopup({
-            content:
-              openType === "random"
-                ? `코인 1개가 소진돼요!\n랜덤으로 편지를 읽어볼까요?`
-                : `코인 2개가 소진돼요!\n선택한 편지를 읽어볼까요?`,
+            content: `코인 2개가 소진돼요!\n선택한 편지를 읽어볼까요?`,
             numberOfButton: 2,
             confirmText: "읽을래요",
             rejectText: "아니요",
@@ -373,6 +383,25 @@ const Home = () => {
       },
     [openCapsule, setPopup, jar?.capsules]
   );
+
+  const onRandomCapsuleClick: MouseEventHandler & TouchEventHandler =
+    useCallback(() => {
+      if (isDragging.current) return;
+      if (isEmpty(jar?.capsules) || jar?.capsules.length === 0)
+        return setPopup(
+          showPopup({ content: "받은 캡슐이 없습니다.", withDimmed: true })
+        );
+
+      return setPopup(
+        showPopup({
+          content: `코인 1개가 소진돼요!\n선택한 편지를 읽어볼까요?`,
+          numberOfButton: 2,
+          confirmText: "읽을래요",
+          rejectText: "아니요",
+          onConfirm: () => openRandomCapsule(),
+        })
+      );
+    }, [setPopup, jar?.capsules, openRandomCapsule]);
 
   const onDragStart: DragEventHandlerType = useCallback((event, info) => {
     isDragging.current = true;
@@ -464,14 +493,7 @@ const Home = () => {
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ repeat: Infinity, repeatDelay: 0.5, duration: 0.2 }}
           src="/images/capsule-box-button.png"
-          onClick={onCapsuleClick(
-            randomItem<string>(
-              jar?.capsules
-                .filter((capsule) => !capsule.read)
-                .map((capsule) => capsule.capsuleId)
-            ),
-            "random"
-          )}
+          onClick={onRandomCapsuleClick}
         />
 
         <Machine ref={machineRef}>
@@ -486,7 +508,7 @@ const Home = () => {
                 onClick={
                   capsule && capsule?.read
                     ? () => {}
-                    : onCapsuleClick(String(item.capsuleId), "choice")
+                    : onCapsuleClick(String(item.capsuleId))
                 }
                 drag
                 onDragStart={onDragStart as any}

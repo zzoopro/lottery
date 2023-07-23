@@ -9,6 +9,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { popupAtom, showPopup } from "../../atom/atom";
 import { AUTH } from "../../utils/constants";
 import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Form = styled.form`
   display: flex;
@@ -32,6 +33,8 @@ export interface ILogin {
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [qs, setQs] = useSearchParams();
   const [popup, setPopup] = useRecoilState(popupAtom);
 
@@ -47,7 +50,9 @@ const LoginForm = () => {
     if (response.status !== 200) {
       return setPopup(showPopup({ content: response.message }));
     }
+    console.log("response", response.data);
     localStorage.setItem(AUTH, response.data.token);
+    queryClient.removeQueries();
     if (qs.get("jarId")) {
       return navigate(`/master/write/${qs.get("jarId")}/send/setting`);
     }

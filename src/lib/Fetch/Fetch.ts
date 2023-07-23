@@ -1,4 +1,4 @@
-import { AUTH_TOKEN } from "../../utils/constants";
+import { AUTH } from "../../utils/constants";
 import { isExist } from "../../utils/functions";
 import { Struct } from "../../utils/type";
 
@@ -58,6 +58,7 @@ export class Fetch {
   };
 
   private getAuth() {
+    const AUTH_TOKEN = localStorage.getItem(AUTH)!;
     if (isExist(AUTH_TOKEN)) {
       this.options.headers = {
         ...this.options.headers,
