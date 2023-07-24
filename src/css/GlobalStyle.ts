@@ -37,10 +37,6 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none; 
   margin: 0;
 }
-a {
-  text-decoration: none;  
-}
-
 `;
 
 export default GlobalStyle;

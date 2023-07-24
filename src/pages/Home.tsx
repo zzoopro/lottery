@@ -237,7 +237,7 @@ const CopyURL = styled(motion.div)`
   font-size: 18px;
   color: #fff;
   transform: translateX(-50%);
-  z-index: 52;
+  z-index: 50;
   cursor: pointer;
   svg {
     margin-left: 5px;
@@ -437,7 +437,7 @@ const Home = () => {
     [navigate, jarId, userType, capsule]
   );
 
-  const copyURL = useCallback(() => {
+  const copyURL: MouseEventHandler = useCallback(() => {
     navigator?.clipboard
       ?.writeText(document.location.href.replace("master", "guest"))
       .then(() => {
@@ -457,7 +457,7 @@ const Home = () => {
       });
   }, [setPopup]);
 
-  const goToWriting = useCallback(() => {
+  const goToWriting: MouseEventHandler = useCallback(() => {
     if (isLogined())
       return navigate(`/${userType}/write/${jarId}/send/setting`);
     setPopup(
