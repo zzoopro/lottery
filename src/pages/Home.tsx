@@ -183,7 +183,7 @@ const Title = styled.h1`
   text-align: center;
   width: 100%;
   bottom: 615px;
-  font-family: "bitbit";
+  font-family: "Bitbit";
   color: #fff;
   font-size: 36px;
   font-weight: bold;
