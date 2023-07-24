@@ -1,8 +1,11 @@
 import React, { ReactNode, useCallback, useEffect } from "react";
 import { styled } from "styled-components";
 import { useRecoilState } from "recoil";
-import { OS, osAtom } from "../../atom/atom";
+import { osAtom } from "../../atom/atom";
 import { osCheck } from "../../utils/functions";
+import { OS } from "../../utils/type";
+import Loading from "./Loading";
+import PopupWrap from "./PopupWrap";
 
 const makeBgColor = (bgColor: BgColor) => {
   switch (bgColor) {
@@ -57,6 +60,8 @@ const Layout = ({ children, bgColor }: LayoutProps) => {
   return (
     <Root>
       <Frame os={os} bgcolor={bgColor}>
+        <Loading />
+        <PopupWrap />
         {children}
       </Frame>
     </Root>

@@ -2,21 +2,15 @@ import React, { useEffect, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { keyframes, styled } from "styled-components";
 import { loadingAtom } from "../../atom/atom";
-import { Axios, FetchInstance } from "../../api/api";
-import {
-  AxiosProxyConfig,
-  AxiosRequestConfig,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-} from "axios";
+import { FetchInstance } from "../../api/api";
 
 const LoadingTag = styled.div`
-  position: fixed;
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   left: 0px;
   top: 0px;

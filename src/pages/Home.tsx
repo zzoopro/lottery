@@ -55,7 +55,7 @@ const Img = styled.img`
 const Main = styled.main`
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100%;
 `;
 const Machine = styled(motion.div)`
   position: absolute;
@@ -183,9 +183,9 @@ const Title = styled.h1`
   text-align: center;
   width: 100%;
   bottom: 615px;
-  font-family: Noto Sans Kr;
+  font-family: "bitbit";
   color: #fff;
-  font-size: 28px;
+  font-size: 36px;
   font-weight: bold;
 `;
 
@@ -483,6 +483,7 @@ const Home = () => {
           </MyName>
         )}
         <Title>{jar?.userNickname}의 뽑기통</Title>
+
         {isLogined() ? (
           <CoinCount>
             <span>COIN POINT</span>
