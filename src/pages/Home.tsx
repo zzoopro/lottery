@@ -437,40 +437,46 @@ const Home = () => {
     [navigate, jarId, userType, capsule]
   );
 
-  const copyURL: MouseEventHandler = useCallback(() => {
-    navigator?.clipboard
-      ?.writeText(document.location.href.replace("master", "guest"))
-      .then(() => {
-        setPopup(
-          showPopup({
-            content: `링크가 복사되었습니다.\n친구에게 공유해 편지를 받아보세요.`,
-            withDimmed: true,
-          })
-        );
-      })
-      .catch((err) => {
-        setPopup(
-          showPopup({
-            content: "링크 복사에 실패하였습니다.",
-          })
-        );
-      });
-  }, [setPopup]);
+  const copyURL: MouseEventHandler = useCallback(
+    (event: any) => {
+      navigator?.clipboard
+        ?.writeText(document.location.href.replace("master", "guest"))
+        .then(() => {
+          setPopup(
+            showPopup({
+              content: `링크가 복사되었습니다.\n친구에게 공유해 편지를 받아보세요.`,
+              withDimmed: true,
+            })
+          );
+        })
+        .catch((err) => {
+          setPopup(
+            showPopup({
+              content: "링크 복사에 실패하였습니다.",
+            })
+          );
+        });
+    },
+    [setPopup, navigator]
+  );
 
-  const goToWriting: MouseEventHandler = useCallback(() => {
-    if (isLogined())
-      return navigate(`/${userType}/write/${jarId}/send/setting`);
-    setPopup(
-      showPopup({
-        numberOfButton: 2,
-        rejectText: "그냥 쓸래요",
-        confirmText: "로그인",
-        content: `로그인을 하고 편지를 쓰면\n코인 1개를 받을 수 있어요!`,
-        onReject: () => navigate(`/${userType}/write/${jarId}/send/setting`),
-        onConfirm: () => navigate(`/login?jarId=${jarId}`),
-      })
-    );
-  }, [navigate, userType, jarId]);
+  const goToWriting: MouseEventHandler = useCallback(
+    (event: any) => {
+      if (isLogined())
+        return navigate(`/${userType}/write/${jarId}/send/setting`);
+      setPopup(
+        showPopup({
+          numberOfButton: 2,
+          rejectText: "그냥 쓸래요",
+          confirmText: "로그인",
+          content: `로그인을 하고 편지를 쓰면\n코인 1개를 받을 수 있어요!`,
+          onReject: () => navigate(`/${userType}/write/${jarId}/send/setting`),
+          onConfirm: () => navigate(`/login?jarId=${jarId}`),
+        })
+      );
+    },
+    [navigate, userType, jarId]
+  );
 
   const asyncNav = useCallback(
     (url: string, navigate: NavigateFunction): Promise<any> => {
