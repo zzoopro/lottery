@@ -438,8 +438,8 @@ const Home = () => {
   );
 
   const copyURL = useCallback(() => {
-    navigator.clipboard
-      .writeText(document.location.href.replace("master", "guest"))
+    navigator?.clipboard
+      ?.writeText(document.location.href.replace("master", "guest"))
       .then(() => {
         setPopup(
           showPopup({
