@@ -9,7 +9,6 @@ import { styled } from "styled-components";
 import {
   MouseEvent,
   MouseEventHandler,
-  ReactNode,
   TouchEventHandler,
   useCallback,
   useEffect,
@@ -32,17 +31,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { capsules, user } from "../api/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faEnvelope, faXmark } from "@fortawesome/free-solid-svg-icons";
-import {
-  IResponse,
-  isEmpty,
-  isExist,
-  isLogined,
-  randomItem,
-} from "../utils/functions";
+import { IResponse, isEmpty, isExist, isLogined } from "../utils/functions";
 import * as API from "../api/api";
 import FlexBox from "../components/common/UI/FlexBox";
-import Dimmed from "../components/common/Dimmed";
-import SpeechBubble from "../components/common/NewbieIntro";
+
 import NewbieIntro from "../components/common/NewbieIntro";
 
 const Img = styled.img`
@@ -115,6 +107,14 @@ const RandomButton = styled(motion(Img))`
   object-fit: contain;
   z-index: 5;
   cursor: pointer;
+`;
+const Floor = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 150px;
+  z-index: 1;
+  background-color: #132851;
 `;
 
 const Message = styled.textarea`
@@ -285,6 +285,7 @@ const Home = () => {
 
   const machineRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef<boolean>(false);
+  const isFirst = useRef<boolean>(true);
 
   const [capsule, setCapsule] = useState<CapsuleStatus>();
   const [isNewbie, setIsNewbie] = useRecoilState(isNewbieAtom);
@@ -331,14 +332,17 @@ const Home = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      if (userData?.nickname) {
+      if (userData?.nickname && isFirst.current === true) {
         setPopup(
           showPopup({
             content: `${userData?.nickname}님 환영해요!\n 간단하게 서비스 소개해 드릴게요`,
             numberOfButton: 2,
             rejectText: "아니요",
             confirmText: "읽을래요",
-            onConfirm: () => setIsNewbie(true),
+            onConfirm: () => {
+              setIsNewbie(true);
+              isFirst.current = false;
+            },
           })
         );
       }
@@ -543,6 +547,7 @@ const Home = () => {
             );
           })}
         </Machine>
+        <Floor />
         {(capsule?.isOpen || isNewbie) && <DimmedBg />}
 
         <AnimatePresence>{isNewbie && <NewbieIntro />}</AnimatePresence>
