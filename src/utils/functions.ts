@@ -44,3 +44,25 @@ export function randomItem<T>(items: T[] | undefined): T {
   const index = Math.round(Math.random() * length);
   return items[index];
 }
+
+export function copyCurrentUrl(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    try {
+      var dummy = document.createElement("input");
+      document.body.appendChild(dummy);
+
+      // 현재 URL을 대체하거나 변형하려면 이 줄을 변경하세요.
+      var url = document.location.href.replace("master", "guest");
+
+      dummy.value = url;
+      dummy.select();
+
+      var success = document.execCommand("copy");
+      document.body.removeChild(dummy);
+      if (!success) return reject("error");
+      resolve("good");
+    } catch (err: any) {
+      reject("error");
+    }
+  });
+}

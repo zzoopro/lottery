@@ -31,7 +31,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { capsules, user } from "../api/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faEnvelope, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { IResponse, isEmpty, isExist, isLogined } from "../utils/functions";
+import {
+  IResponse,
+  copyCurrentUrl,
+  isEmpty,
+  isExist,
+  isLogined,
+} from "../utils/functions";
 import * as API from "../api/api";
 import FlexBox from "../components/common/UI/FlexBox";
 
@@ -439,11 +445,27 @@ const Home = () => {
 
   const copyURL: MouseEventHandler = useCallback(
     (event: any) => {
-      console.log("called");
+      if (window.location.protocol === "http:") {
+        return copyCurrentUrl()
+          .then(() => {
+            setPopup(
+              showPopup({
+                content: `링크가 복사되었습니다.\n친구에게 공유해 편지를 받아보세요.`,
+                withDimmed: true,
+              })
+            );
+          })
+          .catch((err: any) => {
+            setPopup(
+              showPopup({
+                content: "링크 복사에 실패하였습니다.",
+              })
+            );
+          });
+      }
       navigator?.clipboard
         ?.writeText(document.location.href.replace("master", "guest"))
         .then(() => {
-          console.log("success");
           setPopup(
             showPopup({
               content: `링크가 복사되었습니다.\n친구에게 공유해 편지를 받아보세요.`,
@@ -452,7 +474,6 @@ const Home = () => {
           );
         })
         .catch((err) => {
-          console.log("fail");
           setPopup(
             showPopup({
               content: "링크 복사에 실패하였습니다.",
