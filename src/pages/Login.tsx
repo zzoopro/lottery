@@ -10,7 +10,7 @@ import React, { useCallback } from "react";
 
 const Em = styled.span`
   color: #fff;
-  font-size: 20px;
+  font-size: 24px;
   font-family: "Noto Sans Kr";
   font-style: normal;
   font-weight: 300;
