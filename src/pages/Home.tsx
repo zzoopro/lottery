@@ -439,9 +439,11 @@ const Home = () => {
 
   const copyURL: MouseEventHandler = useCallback(
     (event: any) => {
+      console.log("called");
       navigator?.clipboard
         ?.writeText(document.location.href.replace("master", "guest"))
         .then(() => {
+          console.log("success");
           setPopup(
             showPopup({
               content: `링크가 복사되었습니다.\n친구에게 공유해 편지를 받아보세요.`,
@@ -450,6 +452,7 @@ const Home = () => {
           );
         })
         .catch((err) => {
+          console.log("fail");
           setPopup(
             showPopup({
               content: "링크 복사에 실패하였습니다.",
