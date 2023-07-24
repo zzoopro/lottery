@@ -237,7 +237,7 @@ const CopyURL = styled(motion.div)`
   font-size: 18px;
   color: #fff;
   transform: translateX(-50%);
-  z-index: 50;
+  z-index: 52;
   cursor: pointer;
   svg {
     margin-left: 5px;
