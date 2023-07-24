@@ -381,7 +381,6 @@ const Home = () => {
           );
         if (!capsuleId)
           return setPopup(showPopup({ content: "비정상적인 캡슐입니다." }));
-
         if (userType === "guest") return openCapsule(capsuleId);
 
         return setPopup(
@@ -523,7 +522,8 @@ const Home = () => {
               <Capsule
                 key={i}
                 onClick={
-                  capsule && capsule?.read
+                  (capsule && userType === "master" && capsule.read) ||
+                  (userType === "guest" && !capsule?.public)
                     ? () => {}
                     : onCapsuleClick(String(item.capsuleId))
                 }

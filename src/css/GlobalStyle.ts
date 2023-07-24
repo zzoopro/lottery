@@ -37,9 +37,6 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none; 
   margin: 0;
 }
-img {
-  pointer-events: none;
-}
 a {
   text-decoration: none;  
 }
