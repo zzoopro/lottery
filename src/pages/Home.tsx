@@ -330,10 +330,20 @@ const Home = () => {
   }, [jar]);
 
   useEffect(() => {
-    if (!isLogined()) {
-      setIsNewbie(true);
-    }
-  }, []);
+    setTimeout(() => {
+      if (userData?.nickname) {
+        setPopup(
+          showPopup({
+            content: `${userData?.nickname}님 환영해요!\n 간단하게 서비스 소개해 드릴게요`,
+            numberOfButton: 2,
+            rejectText: "아니요",
+            confirmText: "읽을래요",
+            onConfirm: () => setIsNewbie(true),
+          })
+        );
+      }
+    }, 1500);
+  }, [userData?.nickname]);
 
   const openCapsule = useCallback(async (capsuleId: string) => {
     const response: IResponse = await API.capsule(jarId!, capsuleId);
