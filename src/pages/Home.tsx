@@ -330,24 +330,24 @@ const Home = () => {
     }
   }, [jar]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (userData?.nickname && isFirst.current === true) {
-        setPopup(
-          showPopup({
-            content: `${userData?.nickname}님 환영해요!\n 간단하게 서비스 소개해 드릴게요`,
-            numberOfButton: 2,
-            rejectText: "아니요",
-            confirmText: "읽을래요",
-            onConfirm: () => {
-              setIsNewbie(true);
-              isFirst.current = false;
-            },
-          })
-        );
-      }
-    }, 1500);
-  }, [userData?.nickname]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     if (userData?.nickname && isFirst.current === true) {
+  //       setPopup(
+  //         showPopup({
+  //           content: `${userData?.nickname}님 환영해요!\n 간단하게 서비스 소개해 드릴게요`,
+  //           numberOfButton: 2,
+  //           rejectText: "아니요",
+  //           confirmText: "읽을래요",
+  //           onConfirm: () => {
+  //             setIsNewbie(true);
+  //             isFirst.current = false;
+  //           },
+  //         })
+  //       );
+  //     }
+  //   }, 1500);
+  // }, [userData?.nickname]);
 
   const openCapsule = useCallback(async (capsuleId: string) => {
     const response: IResponse = await API.capsule(jarId!, capsuleId);
