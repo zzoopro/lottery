@@ -5,8 +5,8 @@ const GlobalStyle = createGlobalStyle`
 ${reset}  
 
 @font-face{
-  font-family:'Bitbit';
-  src: url("./fonts/Bitbit/DNFBitBitOTF.otf") format("opentype")
+  font-family:'bitbit';
+  src: url("./fonts/bitbit/DNFBitBitTTF.ttf") format("truetype")
 }
 @font-face{
   font-family:'Noto Sans Kr';

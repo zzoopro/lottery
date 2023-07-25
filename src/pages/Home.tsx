@@ -189,7 +189,7 @@ const Title = styled.h1`
   text-align: center;
   width: 100%;
   bottom: 615px;
-  font-family: "Bitbit";
+  font-family: "bitbit";
   color: #fff;
   font-size: 36px;
   font-weight: bold;
