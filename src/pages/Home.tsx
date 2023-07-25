@@ -34,6 +34,7 @@ import { faLink, faEnvelope, faXmark } from "@fortawesome/free-solid-svg-icons";
 import {
   IResponse,
   copyCurrentUrl,
+  debounce,
   isEmpty,
   isExist,
   isLogined,
@@ -250,6 +251,25 @@ const CopyURL = styled(motion.div)`
   }
 `;
 
+const CopyMessage = styled(motion.div)`
+  position: absolute;
+  left: 50%;
+  bottom: 80px;
+  z-index: 100;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 380px;
+  max-width: 90%;
+  height: 80px;
+  font-size: 22px;
+  font-family: Noto Sans Kr;
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 20px;
+`;
+
 const DimmedBg = styled.div`
   position: absolute;
   width: 100%;
@@ -294,6 +314,7 @@ const Home = () => {
   const isFirst = useRef<boolean>(true);
 
   const [capsule, setCapsule] = useState<CapsuleStatus>();
+  const [isCopyMessage, setIsCopyMessage] = useState<boolean>(false);
   const [isNewbie, setIsNewbie] = useRecoilState(isNewbieAtom);
 
   const controls = useDragControls();
@@ -454,17 +475,20 @@ const Home = () => {
     [navigate, jarId, userType, capsule]
   );
 
+  const debounced = useCallback(
+    debounce(() => {
+      setIsCopyMessage(false);
+    }),
+    []
+  );
+
   const copyURL: MouseEventHandler = useCallback(
     (event: any) => {
       if (window.location.protocol === "http:") {
         return copyCurrentUrl()
           .then(() => {
-            setPopup(
-              showPopup({
-                content: `링크가 복사되었습니다.\n친구에게 공유해 편지를 받아보세요.`,
-                withDimmed: true,
-              })
-            );
+            setIsCopyMessage(true);
+            debounced();
           })
           .catch((err: any) => {
             setPopup(
@@ -477,12 +501,8 @@ const Home = () => {
       navigator?.clipboard
         ?.writeText(document.location.href.replace("master", "guest"))
         .then(() => {
-          setPopup(
-            showPopup({
-              content: `링크가 복사되었습니다.\n친구에게 공유해 편지를 받아보세요.`,
-              withDimmed: true,
-            })
-          );
+          setIsCopyMessage(true);
+          debounced();
         })
         .catch((err) => {
           setPopup(
@@ -492,7 +512,7 @@ const Home = () => {
           );
         });
     },
-    [setPopup, navigator]
+    [setPopup, setIsCopyMessage]
   );
 
   const goToWriting: MouseEventHandler = useCallback(
@@ -600,7 +620,7 @@ const Home = () => {
 
         <AnimatePresence>{isNewbie && <NewbieIntro />}</AnimatePresence>
       </Main>
-
+      {isCopyMessage && <CopyMessage>링크 복사 완료</CopyMessage>}
       <CopyURL onClick={userType === "master" ? copyURL : goToWriting}>
         <strong>
           {userType === "master" ? "링크 복사하기" : "편지 작성하기"}

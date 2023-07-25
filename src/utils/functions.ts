@@ -66,3 +66,13 @@ export function copyCurrentUrl(): Promise<string> {
     }
   });
 }
+
+export function debounce(fn: Function, timer = 1500) {
+  let timeoutId: any;
+  return () => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      fn();
+    }, timer);
+  };
+}
