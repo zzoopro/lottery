@@ -328,9 +328,9 @@ const Home = () => {
         itemRef.style.top = `${randomY}px`;
 
         itemRef.style.backgroundColor = `${item.color}`;
-        if (item.read && userType === "master")
+        if (userType === "master" && item.read)
           itemRef.style.backgroundColor = "#D9D9D9";
-        if (userType === "guest" && !item.public)
+        if (userType === "guest" && (!item.public || !item.read))
           itemRef.style.backgroundColor = "#D9D9D9";
       });
     }
@@ -384,14 +384,25 @@ const Home = () => {
   const onCapsuleClick = useCallback(
     (capsuleId: string): MouseEventHandler & TouchEventHandler =>
       (event) => {
-        if (isDragging.current) return;
-        if (isEmpty(jar?.capsules) || jar?.capsules.length === 0)
+        if (userType === "guest" && jar?.userNickname === userData?.nickname)
           return setPopup(
-            showPopup({ content: "받은 캡슐이 없습니다.", withDimmed: true })
+            showPopup({
+              content: "내 뽑기통입니다.\n마스터 권한으로 바뀝니다.",
+              onConfirm: () => navigate(`/master/capsule-box/${jarId}`),
+            })
           );
-        if (!capsuleId)
-          return setPopup(showPopup({ content: "비정상적인 캡슐입니다." }));
-        if (userType === "guest") return openCapsule(capsuleId);
+        if (isDragging.current) return;
+        const capsule = jar?.capsules.find((x) => x.capsuleId === capsuleId);
+        if (!capsule)
+          return setPopup(
+            showPopup({
+              content: "비정상적인 캡슐입니다.\n고객센터에 문의해주세요.",
+            })
+          );
+        if (userType === "master" && capsule.read) return;
+        if (userType === "guest" && !capsule.read) return;
+        if (userType === "guest" && capsule.read && capsule.public)
+          return openCapsule(capsuleId);
 
         return setPopup(
           showPopup({
@@ -486,6 +497,13 @@ const Home = () => {
 
   const goToWriting: MouseEventHandler = useCallback(
     (event: any) => {
+      if (jar?.userNickname === userData?.nickname)
+        return setPopup(
+          showPopup({
+            content: "내 뽑기통입니다.\n마스터 권한으로 바뀝니다.",
+            onConfirm: () => navigate(`/master/capsule-box/${jarId}`),
+          })
+        );
       if (isLogined())
         return navigate(`/${userType}/write/${jarId}/send/setting`);
       setPopup(
@@ -499,7 +517,7 @@ const Home = () => {
         })
       );
     },
-    [navigate, userType, jarId]
+    [navigate, userType, jarId, jar, userData]
   );
 
   const asyncNav = useCallback(
@@ -622,15 +640,14 @@ const Home = () => {
                 ? capsule?.data?.authorNickname
                 : "익명의 누군가"}
             </From>
-            {isExist(capsule?.data?.authorNickname!) &&
-              userType !== "guest" && (
-                <BigButton
-                  onClick={goToReply(capsule.capsuleId)}
-                  style={{ marginTop: "20px" }}
-                >
-                  답장하기
-                </BigButton>
-              )}
+            {isExist(capsule?.data?.authorId!) && userType !== "guest" && (
+              <BigButton
+                onClick={goToReply(capsule.capsuleId)}
+                style={{ marginTop: "20px" }}
+              >
+                답장하기
+              </BigButton>
+            )}
           </Letter>
         )}
       </AnimatePresence>

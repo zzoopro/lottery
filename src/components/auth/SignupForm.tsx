@@ -88,7 +88,7 @@ const SignupForm = () => {
           required: true,
           pattern: {
             value: /^[A-Za-z0-9]+$/,
-            message: "한글을 포함할 수 없습니다.",
+            message: "영문, 숫자를 사용해 4~12자로 입력해주세요",
           },
           minLength: { value: 4, message: "최소 4글자를 입력해주세요." },
           maxLength: {
@@ -127,7 +127,7 @@ const SignupForm = () => {
           required: true,
           pattern: {
             value: /^[A-Za-z0-9]+$/,
-            message: "한글을 포함할 수 없습니다.",
+            message: "영문, 숫자를 사용해 4~12자로 입력해주세요",
           },
           minLength: { value: 4, message: "최소 4글자를 입력해주세요." },
           maxLength: {

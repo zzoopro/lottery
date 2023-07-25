@@ -50,7 +50,7 @@ const LoginForm = () => {
     if (response.status !== 200) {
       return setPopup(showPopup({ content: response.message }));
     }
-    console.log("response", response.data);
+
     localStorage.setItem(AUTH, response.data.token);
     queryClient.removeQueries();
     if (qs.get("jarId")) {
