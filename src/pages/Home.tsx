@@ -25,12 +25,17 @@ import {
 } from "react-router-dom";
 import BigButton from "../components/common/UI/BigButton";
 import { useRecoilState } from "recoil";
-import { isNewbieAtom, popupAtom, showPopup } from "../atom/atom";
+import { INIT_POPUP, isNewbieAtom, popupAtom, showPopup } from "../atom/atom";
 import { CapsuleOpenType, ICapsuleDetail, IJar, IUser } from "../utils/type";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { capsules, user } from "../api/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink, faEnvelope, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  faLink,
+  faEnvelope,
+  faXmark,
+  faAngleLeft,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   IResponse,
   copyCurrentUrl,
@@ -127,7 +132,8 @@ const Floor = styled.div`
 const Message = styled.textarea`
   display: flex;
   width: 100%;
-  height: 80%;
+  height: 65%;
+  min-height: 350px;
   flex-shrink: 0;
 
   padding: 25px;
@@ -167,13 +173,15 @@ const From = styled.h3`
 
 const Letter = styled(motion.div)`
   position: absolute;
-  width: 90%;
   left: 50%;
+  top: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
+  height: max-content;
+  width: 85%;
+  max-width: 90%;
   aspect-ratio: 1 / 1.5;
   padding: 20px;
   border-radius: 20px;
@@ -226,7 +234,7 @@ const MyName = styled.strong`
   top: 10px;
   left: 10px;
   color: #fff;
-  font-family: "Noto Sans Kr";
+  font-family: Noto Sans Kr;
   font-size: 16px;
   font-weight: bold;
   text-decoration: none;
@@ -279,6 +287,37 @@ const DimmedBg = styled.div`
   pointer-events: none;
 `;
 
+const Emozis = styled.div`
+  display: flex;
+  justify-content: space-between;
+  height: max-content;
+  gap: 10px;
+  width: 100%;
+  margin-top: 20px;
+`;
+
+const Emozi = styled.div<{ selected: boolean }>`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 75px;
+  aspect-ratio: 1 / 1;
+  border-radius: 15px;
+  border: ${({ selected }) =>
+    selected ? "solid 2px #5571EE" : "1px solid #c6c6c6"};
+  box-sizing: border-box;
+  img {
+    width: 70%;
+  }
+  &:first-child {
+    img {
+      position: absolute;
+      top: 2px;
+    }
+  }
+`;
+
 type DragEventHandlerType = (
   event: MouseEvent | TouchEvent | PointerEvent,
   info: PanInfo
@@ -287,12 +326,15 @@ type DragEventHandlerType = (
 const letterVariants: Variants = {
   initial: {
     opacity: 0,
+    transform: "translate(-50%, -50%)",
   },
   animate: {
     opacity: 1,
+    transform: "translate(-50%, -50%)",
   },
   exit: {
     opacity: 0,
+    transform: "translate(-50%, -50%)",
   },
 };
 
@@ -315,6 +357,8 @@ const Home = () => {
 
   const [capsule, setCapsule] = useState<CapsuleStatus>();
   const [isCopyMessage, setIsCopyMessage] = useState<boolean>(false);
+  const [emozi, setEmozi] = useState<number>(0);
+
   const [isNewbie, setIsNewbie] = useRecoilState(isNewbieAtom);
 
   const controls = useDragControls();
@@ -357,24 +401,24 @@ const Home = () => {
     }
   }, [jar]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (userData?.nickname && isFirst.current === true) {
-        setPopup(
-          showPopup({
-            content: `${userData?.nickname}님 환영해요!\n 간단하게 서비스 소개해 드릴게요`,
-            numberOfButton: 2,
-            rejectText: "아니요",
-            confirmText: "읽을래요",
-            onConfirm: () => {
-              setIsNewbie(true);
-              isFirst.current = false;
-            },
-          })
-        );
-      }
-    }, 1500);
-  }, [userData?.nickname]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     if (userData?.nickname && isFirst.current === true) {
+  //       setPopup(
+  //         showPopup({
+  //           content: `${userData?.nickname}님 환영해요!\n 간단하게 서비스 소개해 드릴게요`,
+  //           numberOfButton: 2,
+  //           rejectText: "아니요",
+  //           confirmText: "읽을래요",
+  //           onConfirm: () => {
+  //             setIsNewbie(true);
+  //             isFirst.current = false;
+  //           },
+  //         })
+  //       );
+  //     }
+  //   }, 1500);
+  // }, [userData?.nickname]);
 
   const openCapsule = useCallback(async (capsuleId: string) => {
     const response: IResponse = await API.capsule(jarId!, capsuleId);
@@ -409,6 +453,7 @@ const Home = () => {
         if (userType === "guest" && jar?.userNickname === userData?.nickname)
           return setPopup(
             showPopup({
+              ...INIT_POPUP,
               content: "내 뽑기통입니다.\n마스터 권한으로 바뀝니다.",
               onConfirm: () => navigate(`/master/capsule-box/${jarId}`),
             })
@@ -484,7 +529,7 @@ const Home = () => {
     (capsuleId: string): MouseEventHandler =>
       () => {
         navigate(
-          `/${userType}/write/${capsule?.data?.jarId}/reply/setting?capsuleId=${capsuleId}&recipient=${capsule?.data?.authorNickname}`
+          `/${userType}/write/${capsule?.data?.jarId}/reply/setting?capsuleId=${capsuleId}&recipient=${capsule?.data?.authorNickname}&emozi=${emozi}`
         );
       },
     [navigate, jarId, userType, capsule]
@@ -575,7 +620,8 @@ const Home = () => {
       <Main>
         {isExist(userData) && (
           <MyName onClick={() => goToMyCapsuleBox()}>
-            {userData?.nickname} 님
+            <FontAwesomeIcon icon={faAngleLeft} style={{ marginRight: 7 }} />
+            MY 뽑기통
           </MyName>
         )}
         <Title>{jar?.userNickname}의 뽑기통</Title>
@@ -675,13 +721,28 @@ const Home = () => {
                 ? capsule?.data?.authorNickname
                 : "익명의 누군가"}
             </From>
+
             {isExist(capsule?.data?.authorId!) && userType !== "guest" && (
-              <BigButton
-                onClick={goToReply(capsule.capsuleId)}
-                style={{ marginTop: "20px" }}
-              >
-                답장하기
-              </BigButton>
+              <>
+                <Emozis>
+                  {Array.from({ length: 4 })
+                    .map((x, i) => i + 1)
+                    .map((n, i) => (
+                      <Emozi
+                        selected={emozi === i + 1}
+                        onClick={() => setEmozi(i + 1)}
+                      >
+                        <img src={`/images/emozi_0${i + 1}.png`} alt="" />
+                      </Emozi>
+                    ))}
+                </Emozis>
+                <BigButton
+                  onClick={goToReply(capsule.capsuleId)}
+                  style={{ marginTop: "20px" }}
+                >
+                  답장하기
+                </BigButton>
+              </>
             )}
           </Letter>
         )}

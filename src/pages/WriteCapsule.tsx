@@ -148,11 +148,11 @@ const INIT_PAYLOAD = {
 
 const WriteCapsule = () => {
   const { userType, jarId, writeType, step } = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [qs, setQs] = useSearchParams();
   const [popup, setPopup] = useRecoilState(popupAtom);
   const navigate = useNavigate();
 
-  const recipient = useRef(searchParams.get("recipient"));
+  const recipient = useRef(qs.get("recipient"));
 
   const { data: userData } = useQuery<IUser>({
     queryKey: ["user"],
@@ -168,7 +168,7 @@ const WriteCapsule = () => {
 
   const onButtonClick = useCallback(async () => {
     if (writeType === "reply" && step === "setting") {
-      const capsuleId = searchParams.get("capsuleId");
+      const capsuleId = qs.get("capsuleId");
       return navigate(
         `/${userType}/write/${jarId}/reply/writing?capsuleId=${capsuleId}`
       );
@@ -181,7 +181,7 @@ const WriteCapsule = () => {
       if (userData?.nickname) payload["authorNickname"] = userData?.nickname!;
       if (writeType === "send") response = await sendCapsule(jarId!, payload);
       if (writeType === "reply") {
-        const capsuleId = searchParams.get("capsuleId");
+        const capsuleId = qs.get("capsuleId");
         response = await replyCapsule(jarId!, capsuleId!, payload);
       }
       if (response?.status! >= 300)
@@ -196,16 +196,7 @@ const WriteCapsule = () => {
         })
       );
     }
-  }, [
-    navigate,
-    userType,
-    jarId,
-    step,
-    writeType,
-    searchParams,
-    setPopup,
-    payload,
-  ]);
+  }, [navigate, userType, jarId, step, writeType, qs, setPopup, payload]);
 
   const onGobackClick = useCallback(() => {
     if (step === "writing") {
