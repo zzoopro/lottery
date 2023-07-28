@@ -13,11 +13,14 @@ ${reset}
   font-family:'Noto Sans';
   src: url("./fonts/Noto_Sans/NotoSans-Regular.ttf") format("truetype");
 }
-
+@font-face{
+  font-family:'Han Sans';
+  src: url("./fonts/Black_Han_Sans/BlackHanSans-Regular.ttf") format("truetype");
+}
 
 * {
   box-sizing: border-box;    
-  font-family: "Noto Sans", "Noto Sans KR", AppleSDGothic , sans-serif !important;
+  font-family: "Noto Sans", "Noto Sans KR", "Han Sans", AppleSDGothic , sans-serif !important;
 }
 
 body {    

@@ -190,7 +190,7 @@ const Title = styled.h1`
   text-align: center;
   width: 100%;
   bottom: 615px;
-  font-family: Noto Sans Kr;
+  font-family: Han Sans;
   color: #fff;
   font-size: 36px;
   font-weight: bold;
