@@ -20,7 +20,7 @@ ${reset}
 
 * {
   box-sizing: border-box;    
-  font-family: "Noto Sans", "Noto Sans KR", "Han Sans", AppleSDGothic , sans-serif !important;
+  font-family: Noto Sans, Noto Sans KR, AppleSDGothic;
 }
 
 body {    
