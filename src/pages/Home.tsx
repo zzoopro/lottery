@@ -55,6 +55,7 @@ const Main = styled.main`
   position: relative;
   width: 100%;
   height: 100%;
+  background: linear-gradient(180deg, #1f8dc0 0%, #9091cc 100%);
 `;
 const Machine = styled(motion.div)`
   position: absolute;
@@ -118,7 +119,7 @@ const Floor = styled.div`
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 150px;
+  height: 130px;
   z-index: 1;
   background-color: #132851;
 `;
