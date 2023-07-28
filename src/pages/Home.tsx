@@ -58,14 +58,14 @@ const Main = styled.main`
 `;
 const Machine = styled(motion.div)`
   position: absolute;
-  bottom: 300px;
+  bottom: 340px;
   left: 50.5%;
   transform: translateX(-50%);
-  height: 250px;
+  height: 290px;
   aspect-ratio: 1 / 1;
   background-color: #f1f1f1;
   border: 1px solid #333;
-  border-radius: 5px;
+  border-radius: 15px;
   z-index: 3;
 `;
 const Capsule = styled(motion.div)<{ bgcolor: string }>`
@@ -91,11 +91,10 @@ const Line = styled.div`
 const CapsuleBox = styled(Img)`
   position: absolute;
   left: 50%;
-  bottom: 80px;
+  bottom: 60px;
   transform: translateX(-50%);
   object-fit: contain;
-  max-width: 80%;
-  height: 500px;
+  height: 600px;
   z-index: 2;
   pointer-events: none;
 `;
@@ -109,7 +108,7 @@ const CapsuleLight = styled(Img)`
 const RandomButton = styled(motion(Img))`
   position: absolute;
   left: 50%;
-  bottom: 200px;
+  bottom: 215px;
   width: 70px;
   object-fit: contain;
   z-index: 5;
@@ -189,8 +188,8 @@ const Title = styled.h1`
   position: absolute;
   text-align: center;
   width: 100%;
-  bottom: 615px;
-  font-family: Han Sans;
+  bottom: 700px;
+  font-family: BitBit;
   color: #fff;
   font-size: 36px;
   font-weight: bold;
@@ -238,7 +237,7 @@ const CopyURL = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  bottom: 30px;
+  bottom: 25px;
   font-family: Noto Sans Kr;
   font-weight: bold;
   font-size: 18px;

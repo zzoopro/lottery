@@ -7,20 +7,24 @@ ${reset}
 
 @font-face{
   font-family:'Noto Sans Kr';
-  src: url("./fonts/Noto_Sans_KR/NotoSansKR-Regular.otf") format("opentype");
+  src: url("/fonts/Noto_Sans_KR/NotoSansKR-Regular.otf") format("opentype");
 }
 @font-face{
   font-family:'Noto Sans';
-  src: url("./fonts/Noto_Sans/NotoSans-Regular.ttf") format("truetype");
+  src: url("/fonts/Noto_Sans/NotoSans-Regular.ttf") format("truetype");
+}
+@font-face{
+  font-family:'BitBit';
+  src: url("/fonts/BitBit/DNFBitBitOTF.otf") format("opentype");
 }
 @font-face{
   font-family:'Han Sans';
-  src: url("./fonts/Black_Han_Sans/BlackHanSans-Regular.ttf") format("truetype");
+  src: url("/fonts/Black_Han_Sans/BlackHanSans-Regular.ttf") format("truetype");
 }
 
 * {
   box-sizing: border-box;    
-  font-family: Noto Sans, Noto Sans KR, AppleSDGothic;
+  font-family: Noto Sans, Noto Sans KR, AppleSDGothic sans-serif;
 }
 
 body {    
