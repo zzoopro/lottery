@@ -190,7 +190,7 @@ const Title = styled.h1`
   text-align: center;
   width: 100%;
   bottom: 615px;
-  font-family: "bitbit";
+  font-family: Noto Sans Kr;
   color: #fff;
   font-size: 36px;
   font-weight: bold;
@@ -405,6 +405,7 @@ const Home = () => {
   const onCapsuleClick = useCallback(
     (capsuleId: string): MouseEventHandler & TouchEventHandler =>
       (event) => {
+        if (isDragging.current) return;
         if (userType === "guest" && jar?.userNickname === userData?.nickname)
           return setPopup(
             showPopup({
@@ -412,7 +413,13 @@ const Home = () => {
               onConfirm: () => navigate(`/master/capsule-box/${jarId}`),
             })
           );
-        if (isDragging.current) return;
+        if (userType === "master" && !isLogined())
+          return setPopup(
+            showPopup({
+              content: "로그인이 필요합니다.",
+              onConfirm: () => navigate("/login"),
+            })
+          );
         const capsule = jar?.capsules.find((x) => x.capsuleId === capsuleId);
         if (!capsule)
           return setPopup(
@@ -441,10 +448,18 @@ const Home = () => {
   const onRandomCapsuleClick: MouseEventHandler & TouchEventHandler =
     useCallback(() => {
       if (isDragging.current) return;
+      if (userType === "master" && !isLogined())
+        return setPopup(
+          showPopup({
+            content: "로그인이 필요합니다.",
+            onConfirm: () => navigate("/login"),
+          })
+        );
       if (isEmpty(jar?.capsules) || jar?.capsules.length === 0)
         return setPopup(
           showPopup({ content: "캡슐이 없습니다.", withDimmed: true })
         );
+
       if (userType === "guest") return openRandomCapsule();
 
       return setPopup(

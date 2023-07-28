@@ -4,10 +4,7 @@ import reset from "styled-reset";
 const GlobalStyle = createGlobalStyle`
 ${reset}  
 
-@font-face{
-  font-family:'bitbit';
-  src: url("./fonts/bitbit/DNFBitBitTTF.ttf") format("truetype")
-}
+
 @font-face{
   font-family:'Noto Sans Kr';
   src: url("./fonts/Noto_Sans_KR/NotoSansKR-Regular.otf") format("opentype");
@@ -20,7 +17,7 @@ ${reset}
 
 * {
   box-sizing: border-box;    
-  font-family: "Noto Sans", "Noto Sans KR", "Bitbit", AppleSDGothic , sans-serif !important;
+  font-family: "Noto Sans", "Noto Sans KR", AppleSDGothic , sans-serif !important;
 }
 
 body {    
