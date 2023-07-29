@@ -88,6 +88,14 @@ const Capsule = styled(motion.div)<{ bgcolor: string }>`
   border: 2px solid #263ca6;
 `;
 
+const CapsuleLight = styled(Img)`
+  position: absolute;
+  left: 10%;
+  top: 10%;
+  width: 30%;
+  pointer-events: none;
+`;
+
 const Line = styled.div`
   width: 100%;
   height: 2px;
@@ -104,13 +112,7 @@ const CapsuleBox = styled(Img)`
   z-index: 2;
   pointer-events: none;
 `;
-const CapsuleLight = styled(Img)`
-  position: absolute;
-  left: 10%;
-  top: 10%;
-  width: 30%;
-  pointer-events: none;
-`;
+
 const RandomButton = styled(motion(Img))`
   position: absolute;
   left: 50%;
@@ -135,6 +137,7 @@ const Message = styled.textarea`
   height: 65%;
   min-height: 350px;
   flex-shrink: 0;
+  overflow-y: scroll;
 
   padding: 25px;
   border-radius: 20px;
@@ -282,7 +285,7 @@ const DimmedBg = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.65);
   z-index: 51;
   pointer-events: none;
 `;
@@ -615,7 +618,7 @@ const Home = () => {
   return (
     <Layout bgColor="blue">
       <Main>
-        {isExist(userData) && (
+        {isExist(userData) && userType === "guest" && (
           <MyName onClick={() => goToMyCapsuleBox()}>
             <FontAwesomeIcon icon={faAngleLeft} style={{ marginRight: 7 }} />
             MY 뽑기통
@@ -676,7 +679,7 @@ const Home = () => {
         <Floor />
         {(capsule?.isOpen || isNewbie) && <DimmedBg />}
 
-        <AnimatePresence>{isNewbie && <NewbieIntro />}</AnimatePresence>
+        {isNewbie && <NewbieIntro />}
       </Main>
       {isCopyMessage && <CopyMessage>링크 복사 완료</CopyMessage>}
       <CopyURL onClick={userType === "master" ? copyURL : goToWriting}>

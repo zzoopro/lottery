@@ -57,14 +57,14 @@ const SignupForm = () => {
   const check = async (data: FieldValues) => {
     const idCheck: IResponse = await API.duplicateCheck("id", data.userId);
     if (!idCheck.data?.success)
-      return setError("userId", { message: "이미 사용중인 ID 입니다." });
+      return setError("userId", { message: "이미 사용중인 아이디입니다." });
 
     const nicknameCheck: IResponse = await API.duplicateCheck(
       "nickname",
       data.nickname
     );
     if (!nicknameCheck.data?.success)
-      return setError("nickname", { message: "이미 사용중인 닉네임 입니다." });
+      return setError("nickname", { message: "이미 사용중인 닉네임입니다." });
 
     onSubmit(data);
   };
