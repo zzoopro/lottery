@@ -11,6 +11,7 @@ export interface IUser {
   coin: number;
   jarId: string;
   nickname: string;
+  lastLoginAt: string;
   phoneNumber: string;
   userId: string;
   [key: string]: any;

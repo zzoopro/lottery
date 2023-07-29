@@ -50,13 +50,22 @@ const SignupForm = () => {
     register,
     handleSubmit,
     watch,
+    setError,
     formState: { errors },
   } = useForm();
 
-  const checkId = async (data: FieldValues) => {
-    const response: IResponse = await API.idCheck(data.userId);
-    if (response.status !== 200)
-      return setPopup(showPopup({ content: response.message ?? "" }));
+  const check = async (data: FieldValues) => {
+    const idCheck: IResponse = await API.duplicateCheck("id", data.userId);
+    if (!idCheck.data?.success)
+      return setError("userId", { message: "이미 사용중인 ID 입니다." });
+
+    const nicknameCheck: IResponse = await API.duplicateCheck(
+      "nickname",
+      data.nickname
+    );
+    if (!nicknameCheck.data?.success)
+      return setError("nickname", { message: "이미 사용중인 닉네임 입니다." });
+
     onSubmit(data);
   };
 
@@ -79,7 +88,7 @@ const SignupForm = () => {
   };
 
   return (
-    <Form onSubmit={handleSubmit(checkId)}>
+    <Form onSubmit={handleSubmit(check)}>
       <Label htmlFor="userId">아이디</Label>
       <Input
         id="userId"

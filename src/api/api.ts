@@ -52,8 +52,8 @@ export const login = async (data: ILogin) => {
     .catch((error: Error) => ErrNetwork(error));
 };
 
-export const idCheck = async (id: string) => {
-  return await FetchInstance.get(`${SERVER_URL}/${USER_CHECK}?id=${id}`)
+export const duplicateCheck = async (type: "id" | "nickname", data: string) => {
+  return await FetchInstance.get(`${SERVER_URL}/${USER_CHECK}?${type}=${data}`)
     .then((response) => response.json())
     .catch((error: Error) => ErrNetwork(error));
 };
