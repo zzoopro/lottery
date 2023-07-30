@@ -583,7 +583,7 @@ const Home = async () => {
   );
 
   const reaction = useCallback(
-    async async async (emoziId: number) => {
+    async (emoziId: number, capsuleId: string) => {
       const response: IResponse = await API.replyEmoji(jarId!, capsuleId, {
         emoji: emoziId,
         dumpField: "",
@@ -591,7 +591,7 @@ const Home = async () => {
       if (response.status !== 200)
         return setPopup(showPopup({ content: response.message ?? "" }));
     },
-    [jarId, capsuleId]
+    [jarId]
   );
 
   const copyURL: MouseEventHandler = useCallback(
@@ -800,7 +800,10 @@ const Home = async () => {
                 {Array.from({ length: 4 })
                   .map((x, i) => i + 1)
                   .map((n, i) => (
-                    <Emozi key={i} onClick={() => reaction(i + 1)}>
+                    <Emozi
+                      key={i}
+                      onClick={() => reaction(i + 1, capsule?.capsuleId)}
+                    >
                       <img src={`/images/emozi_0${i + 1}.png`} alt="" />
                     </Emozi>
                   ))}
