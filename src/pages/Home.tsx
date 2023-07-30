@@ -434,6 +434,7 @@ const Home = () => {
           numberOfButton: 2,
           rejectText: "아니요",
           confirmText: "읽을래요",
+          withDimmed: true,
           onConfirm: () => {
             userRefetch();
             setIsNewbie(true);
