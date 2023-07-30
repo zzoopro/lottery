@@ -46,11 +46,11 @@ const LoginForm = () => {
   } = useForm();
 
   const onSubmit = async (data: FieldValues) => {
+    localStorage.removeItem(AUTH);
     const response = await API.login(data as ILogin);
     if (response.status !== 200) {
       return setPopup(showPopup({ content: response.message }));
     }
-    localStorage.removeItem(AUTH);
     localStorage.setItem(AUTH, response.data.token);
     queryClient.removeQueries();
     if (qs.get("jarId")) {
