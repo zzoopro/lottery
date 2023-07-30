@@ -457,6 +457,12 @@ const Home = () => {
     }
   }, [userData?.lastLoginAt]);
 
+  useEffect(() => {
+    if (capsule?.data?.type === "normal" && capsule?.data?.emoji !== 0) {
+      setEmozi(capsule?.data?.emoji);
+    }
+  }, [capsule]);
+
   const openCapsule = useCallback(async (capsuleId: string) => {
     const response: IResponse = await API.capsule(jarId!, capsuleId);
 
@@ -503,6 +509,7 @@ const Home = () => {
             })
           );
         const capsule = jar?.capsules.find((x) => x.capsuleId === capsuleId);
+
         if (!capsule)
           return setPopup(
             showPopup({
@@ -705,8 +712,7 @@ const Home = () => {
               <Capsule
                 key={i}
                 onClick={
-                  (capsule && userType === "master" && capsule.read) ||
-                  (userType === "guest" && !capsule?.public)
+                  userType === "guest" && !capsule?.public
                     ? () => {}
                     : onCapsuleClick(String(item.capsuleId))
                 }
@@ -772,28 +778,39 @@ const Home = () => {
                 : "익명의 누군가"}
             </From>
 
-            {isExist(capsule?.data?.authorId!) && userType !== "guest" && (
-              <>
-                <Emozis>
-                  {Array.from({ length: 4 })
-                    .map((x, i) => i + 1)
-                    .map((n, i) => (
-                      <Emozi
-                        selected={emozi === i + 1}
-                        onClick={() => setEmozi(i + 1)}
-                      >
-                        <img src={`/images/emozi_0${i + 1}.png`} alt="" />
-                      </Emozi>
-                    ))}
-                </Emozis>
-                <BigButton
-                  onClick={goToReply(capsule.capsuleId)}
-                  style={{ marginTop: "20px" }}
-                >
-                  답장하기
-                </BigButton>
-              </>
-            )}
+            {isExist(capsule?.data?.authorId!) &&
+              userType !== "guest" &&
+              capsule?.data?.type === "normal" && (
+                <>
+                  <Emozis>
+                    {Array.from({ length: 4 })
+                      .map((x, i) => i + 1)
+                      .map((n, i) => (
+                        <Emozi
+                          key={i}
+                          selected={
+                            capsule?.data?.type === "normal"
+                              ? emozi === i + 1
+                              : capsule?.data?.emoji === i + 1
+                          }
+                          onClick={() => setEmozi(i + 1)}
+                        >
+                          <img src={`/images/emozi_0${i + 1}.png`} alt="" />
+                        </Emozi>
+                      ))}
+                  </Emozis>
+                  <BigButton
+                    onClick={
+                      capsule?.data?.type === "normal"
+                        ? goToReply(capsule.capsuleId)
+                        : () => {}
+                    }
+                    style={{ marginTop: "20px" }}
+                  >
+                    답장하기
+                  </BigButton>
+                </>
+              )}
           </Letter>
         )}
       </AnimatePresence>
