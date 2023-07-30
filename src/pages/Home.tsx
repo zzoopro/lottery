@@ -323,7 +323,7 @@ const Emozis = styled.div`
   margin-top: 20px;
 `;
 
-const Emozi = styled.div<{ selected: boolean }>`
+const Emozi = styled.div`
   position: relative;
   display: flex;
   justify-content: center;
@@ -331,8 +331,6 @@ const Emozi = styled.div<{ selected: boolean }>`
   width: 75px;
   aspect-ratio: 1 / 1;
   border-radius: 15px;
-  border: ${({ selected }) =>
-    selected ? "solid 2px #5571EE" : "1px solid #c6c6c6"};
   box-sizing: border-box;
   img {
     width: 70%;
@@ -349,12 +347,15 @@ const Dots = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 20px;
 `;
-const Dot = styled(motion.div)`
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin: 0px 20px;
+const Dot = styled(motion.div)<{ selected: boolean }>`
+  width: ${({ selected }) => (selected ? "30px" : "15px")};
+  height: 15px;
+  border-radius: 15px;
+  margin: 0px 7px;
+  background-color: ${({ selected }) => (selected ? "#333" : "#d9d9d9")};
+  transition: all 0.2s ease-in-out;
 `;
 
 type DragEventHandlerType = (
@@ -383,7 +384,7 @@ interface CapsuleStatus {
   data: ICapsuleDetail | null;
 }
 
-const Home = () => {
+const Home = async () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -395,7 +396,6 @@ const Home = () => {
 
   const [capsule, setCapsule] = useState<CapsuleStatus>();
   const [isCopyMessage, setIsCopyMessage] = useState<boolean>(false);
-  const [emozi, setEmozi] = useState<number>(0);
   const [dot, setDot] = useState<number>(0);
 
   const [isNewbie, setIsNewbie] = useRecoilState(isNewbieAtom);
@@ -456,12 +456,6 @@ const Home = () => {
       );
     }
   }, [userData?.lastLoginAt]);
-
-  useEffect(() => {
-    if (capsule?.data?.type === "normal" && capsule?.data?.emoji !== 0) {
-      setEmozi(capsule?.data?.emoji);
-    }
-  }, [capsule]);
 
   const openCapsule = useCallback(async (capsuleId: string) => {
     const response: IResponse = await API.capsule(jarId!, capsuleId);
@@ -573,23 +567,12 @@ const Home = () => {
 
   const goToReply = useCallback(
     (capsuleId: string): MouseEventHandler =>
-      async () => {
-        if (emozi !== 0) {
-          const response: IResponse = await API.replyEmoji(jarId!, capsuleId, {
-            emoji: emozi,
-            dumpField: "",
-          });
-          if (response.status !== 200)
-            return setPopup(showPopup({ content: response.message ?? "" }));
-          return navigate(
-            `/${userType}/write/${capsule?.data?.jarId}/reply/setting?capsuleId=${capsuleId}&recipient=${capsule?.data?.authorNickname}`
-          );
-        }
+      () => {
         navigate(
           `/${userType}/write/${capsule?.data?.jarId}/reply/setting?capsuleId=${capsuleId}&recipient=${capsule?.data?.authorNickname}`
         );
       },
-    [navigate, jarId, userType, capsule, emozi]
+    [navigate, jarId, userType, capsule]
   );
 
   const debounced = useCallback(
@@ -597,6 +580,18 @@ const Home = () => {
       setIsCopyMessage(false);
     }),
     []
+  );
+
+  const reaction = useCallback(
+    async async async (emoziId: number) => {
+      const response: IResponse = await API.replyEmoji(jarId!, capsuleId, {
+        emoji: emoziId,
+        dumpField: "",
+      });
+      if (response.status !== 200)
+        return setPopup(showPopup({ content: response.message ?? "" }));
+    },
+    [jarId, capsuleId]
   );
 
   const copyURL: MouseEventHandler = useCallback(
@@ -759,7 +754,11 @@ const Home = () => {
               style={{ justifyContent: "space-between" }}
             >
               <To>
-                <strong>To.</strong> {jar?.userNickname}
+                <strong>To.</strong>{" "}
+                {capsule?.data?.type === "normal" ||
+                (capsule?.data?.type === "reply" && dot === 0)
+                  ? jar?.userNickname
+                  : capsule?.data?.authorNickname}
               </To>
               <FontAwesomeIcon
                 icon={faXmark}
@@ -771,34 +770,46 @@ const Home = () => {
             </FlexBox>
 
             <Message disabled value={capsule?.data?.content}></Message>
-            <From>
-              <strong>From.</strong>{" "}
-              {isExist(capsule?.data?.authorNickname)
-                ? capsule?.data?.authorNickname
-                : "익명의 누군가"}
-            </From>
-
+            {capsule?.data?.type === "reply" && (
+              <Dots>
+                <Dot selected={dot === 0} onClick={() => setDot(0)} />{" "}
+                <Dot selected={dot === 1} onClick={() => setDot(1)} />
+              </Dots>
+            )}
+            <FlexBox
+              direction="row"
+              style={{ justifyContent: "space-between", alignItems: "center" }}
+            >
+              {capsule?.data?.emoji && capsule?.data?.emoji !== 0 ? (
+                <img src={`/images/emozi_0${capsule?.data?.emoji}.png`} />
+              ) : (
+                <div />
+              )}
+              <From>
+                <strong>From.</strong>{" "}
+                {isExist(capsule?.data?.authorNickname)
+                  ? capsule?.data?.type === "normal" ||
+                    (capsule?.data?.type === "reply" && dot === 0)
+                    ? capsule?.data?.authorNickname
+                    : jar?.userNickname
+                  : "익명의 누군가"}
+              </From>
+            </FlexBox>
+            {capsule?.data?.emoji === 0 && (
+              <Emozis>
+                {Array.from({ length: 4 })
+                  .map((x, i) => i + 1)
+                  .map((n, i) => (
+                    <Emozi key={i} onClick={() => reaction(i + 1)}>
+                      <img src={`/images/emozi_0${i + 1}.png`} alt="" />
+                    </Emozi>
+                  ))}
+              </Emozis>
+            )}
             {isExist(capsule?.data?.authorId!) &&
               userType !== "guest" &&
               capsule?.data?.type === "normal" && (
                 <>
-                  <Emozis>
-                    {Array.from({ length: 4 })
-                      .map((x, i) => i + 1)
-                      .map((n, i) => (
-                        <Emozi
-                          key={i}
-                          selected={
-                            capsule?.data?.type === "normal"
-                              ? emozi === i + 1
-                              : capsule?.data?.emoji === i + 1
-                          }
-                          onClick={() => setEmozi(i + 1)}
-                        >
-                          <img src={`/images/emozi_0${i + 1}.png`} alt="" />
-                        </Emozi>
-                      ))}
-                  </Emozis>
                   <BigButton
                     onClick={
                       capsule?.data?.type === "normal"
