@@ -309,6 +309,7 @@ const Emozi = styled.div`
   aspect-ratio: 1 / 1;
   border-radius: 15px;
   box-sizing: border-box;
+  border: 1px solid #c6c6c6;
   img {
     width: 70%;
   }
@@ -572,6 +573,11 @@ const Home = () => {
       });
       if (response.status !== 200)
         return setPopup(showPopup({ content: response.message ?? "" }));
+
+      const res: IResponse = await API.capsule(jarId!, capsuleId);
+      if (res.status !== 200)
+        return setPopup(showPopup({ content: res.message ?? "" }));
+      setCapsule({ isOpen: true, capsuleId, data: res.data as any });
     },
     [jarId, setPopup]
   );
@@ -780,7 +786,7 @@ const Home = () => {
                   : "익명의 누군가"}
               </From>
             </FlexBox>
-            {capsule?.data?.emoji === 0 && (
+            {capsule?.data?.emoji !== null && (
               <Emozis>
                 {Array.from({ length: 4 })
                   .map((x, i) => i + 1)
