@@ -810,20 +810,19 @@ const Home = async () => {
               </Emozis>
             )}
             {isExist(capsule?.data?.authorId!) &&
-              userType !== "guest" &&
-              capsule?.data?.type === "normal" && (
-                <>
-                  <BigButton
-                    onClick={
-                      capsule?.data?.type === "normal"
-                        ? goToReply(capsule.capsuleId)
-                        : () => {}
-                    }
-                    style={{ marginTop: "20px" }}
-                  >
-                    답장하기
-                  </BigButton>
-                </>
+              userType === "master" &&
+              capsule?.data?.type === "normal" &&
+              !capsule?.data?.replied && (
+                <BigButton
+                  onClick={
+                    capsule?.data?.type === "normal"
+                      ? goToReply(capsule.capsuleId)
+                      : () => {}
+                  }
+                  style={{ marginTop: "20px" }}
+                >
+                  답장하기
+                </BigButton>
               )}
           </Letter>
         )}
