@@ -93,7 +93,6 @@ const CapsuleEmozi = styled(Img)`
   bottom: 5px;
   right: 5px;
   width: 35px;
-  aspect-ratio: 1 / 1;
 `;
 
 const CapsuleLight = styled(Img)`
@@ -146,6 +145,7 @@ const Message = styled.textarea`
   min-height: 350px;
   flex-shrink: 0;
   overflow-y: scroll;
+  outline: none;
 
   padding: 25px;
   border-radius: 20px;
@@ -586,8 +586,9 @@ const Home = () => {
       if (res.status !== 200)
         return setPopup(showPopup({ content: res.message ?? "" }));
       setCapsule({ isOpen: true, capsuleId, data: res.data as any });
+      jarRefetch();
     },
-    [jarId, setPopup]
+    [jarId, setPopup, jarRefetch]
   );
 
   const copyURL: MouseEventHandler = useCallback(
@@ -662,6 +663,12 @@ const Home = () => {
   const goToMyCapsuleBox = useCallback(() => {
     asyncNav(`/master/capsule-box/${userData?.jarId}`, navigate);
   }, [asyncNav, navigate, userData]);
+
+  const messageClick = useCallback(() => {
+    if (capsule?.data?.replyCapsule) {
+      setDot((old) => (old === 0 ? 1 : 0));
+    }
+  }, [capsule, setDot]);
 
   return (
     <Layout bgColor="blue">
@@ -769,7 +776,8 @@ const Home = () => {
             </FlexBox>
 
             <Message
-              disabled
+              readOnly
+              onClick={messageClick}
               value={
                 !capsule?.data?.replyCapsule ||
                 (capsule?.data?.replyCapsule && dot === 0)

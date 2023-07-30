@@ -192,7 +192,12 @@ const WriteCapsule = () => {
             writeType === "send"
               ? "캡슐이 잘 전달됬어요."
               : "답장이 잘 전달됬어요.",
-          onConfirm: () => navigate(`/guest/capsule-box/${jarId}`),
+          onConfirm: () =>
+            navigate(
+              `/${
+                writeType === "send" ? "guest" : "master"
+              }/capsule-box/${jarId}`
+            ),
         })
       );
     }

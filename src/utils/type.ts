@@ -39,7 +39,6 @@ export interface ICapsuleDetail {
   authorId: string;
   content: string;
   createdAt: string;
-  emojiReply: any;
   emoji: number;
   jarId: string;
   type: "normal" | "reply";
