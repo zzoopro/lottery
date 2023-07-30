@@ -26,7 +26,7 @@ import {
 import BigButton from "../components/common/UI/BigButton";
 import { useRecoilState } from "recoil";
 import { INIT_POPUP, isNewbieAtom, popupAtom, showPopup } from "../atom/atom";
-import { CapsuleOpenType, ICapsuleDetail, IJar, IUser } from "../utils/type";
+import { ICapsuleDetail, IJar, IUser } from "../utils/type";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { capsules, user } from "../api/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -145,29 +145,6 @@ const Message = styled.textarea`
   background: var(--unnamed, rgba(255, 255, 255, 0.14));
   margin: 20px 0px;
 
-  font-size: 20px;
-  font-family: Noto Sans Kr;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 167.023%;
-`;
-
-const MessageSlider = styled(motion.div)`
-  display: flex;
-  width: 100%;
-  height: 65%;
-  min-height: 350px;
-  flex-shrink: 0;
-  overflow-y: scroll;
-
-  padding: 25px;
-  border-radius: 20px;
-  border: 1px solid var(--unnamed, #c6c6c6);
-  background: var(--unnamed, rgba(255, 255, 255, 0.14));
-  margin: 20px 0px;
-`;
-
-const Content = styled(motion.span)`
   font-size: 20px;
   font-family: Noto Sans Kr;
   font-style: normal;
@@ -389,7 +366,7 @@ const Home = async () => {
   const queryClient = useQueryClient();
 
   const { userType, jarId } = useParams();
-  const [popup, setPopup] = useRecoilState(popupAtom);
+  const [_, setPopup] = useRecoilState(popupAtom);
 
   const machineRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef<boolean>(false);
@@ -438,7 +415,7 @@ const Home = async () => {
           itemRef.style.backgroundColor = "#D9D9D9";
       });
     }
-  }, [jar]);
+  }, [jar, userType]);
 
   useEffect(() => {
     if (userData?.lastLoginAt === null) {
@@ -455,18 +432,27 @@ const Home = async () => {
         })
       );
     }
-  }, [userData?.lastLoginAt]);
+  }, [
+    userData?.lastLoginAt,
+    setIsNewbie,
+    setPopup,
+    userData?.nickname,
+    userRefetch,
+  ]);
 
-  const openCapsule = useCallback(async (capsuleId: string) => {
-    const response: IResponse = await API.capsule(jarId!, capsuleId);
+  const openCapsule = useCallback(
+    async (capsuleId: string) => {
+      const response: IResponse = await API.capsule(jarId!, capsuleId);
 
-    if (response.status !== 200)
-      return setPopup(showPopup({ content: response.message ?? "" }));
+      if (response.status !== 200)
+        return setPopup(showPopup({ content: response.message ?? "" }));
 
-    setCapsule({ isOpen: true, capsuleId, data: response.data as any });
-    userRefetch();
-    jarRefetch();
-  }, []);
+      setCapsule({ isOpen: true, capsuleId, data: response.data as any });
+      userRefetch();
+      jarRefetch();
+    },
+    [jarId, jarRefetch, setPopup, userRefetch]
+  );
 
   const openRandomCapsule = useCallback(async () => {
     const response: IResponse = await API.randomCapsule(jarId!);
@@ -481,7 +467,7 @@ const Home = async () => {
     });
     userRefetch();
     jarRefetch();
-  }, []);
+  }, [jarId, setCapsule, userRefetch, jarRefetch, setPopup]);
 
   const onCapsuleClick = useCallback(
     (capsuleId: string): MouseEventHandler & TouchEventHandler =>
@@ -527,7 +513,7 @@ const Home = async () => {
           })
         );
       },
-    [openCapsule, setPopup, jar?.capsules]
+    [openCapsule, setPopup, jar, jarId, navigate, userData, userType]
   );
 
   const onRandomCapsuleClick: MouseEventHandler & TouchEventHandler =
@@ -556,7 +542,7 @@ const Home = async () => {
           onConfirm: () => openRandomCapsule(),
         })
       );
-    }, [setPopup, jar?.capsules, openRandomCapsule]);
+    }, [setPopup, jar?.capsules, openRandomCapsule, navigate, userType]);
 
   const onDragStart: DragEventHandlerType = useCallback((event, info) => {
     isDragging.current = true;
@@ -572,16 +558,12 @@ const Home = async () => {
           `/${userType}/write/${capsule?.data?.jarId}/reply/setting?capsuleId=${capsuleId}&recipient=${capsule?.data?.authorNickname}`
         );
       },
-    [navigate, jarId, userType, capsule]
+    [navigate, userType, capsule]
   );
 
-  const debounced = useCallback(
-    debounce(() => {
-      setIsCopyMessage(false);
-    }),
-    []
-  );
-
+  const debounced = debounce(() => {
+    setIsCopyMessage(false);
+  });
   const reaction = useCallback(
     async (emoziId: number, capsuleId: string) => {
       const response: IResponse = await API.replyEmoji(jarId!, capsuleId, {
@@ -591,7 +573,7 @@ const Home = async () => {
       if (response.status !== 200)
         return setPopup(showPopup({ content: response.message ?? "" }));
     },
-    [jarId]
+    [jarId, setPopup]
   );
 
   const copyURL: MouseEventHandler = useCallback(
@@ -624,7 +606,7 @@ const Home = async () => {
           );
         });
     },
-    [setPopup, setIsCopyMessage]
+    [setPopup, setIsCopyMessage, debounced]
   );
 
   const goToWriting: MouseEventHandler = useCallback(
@@ -649,7 +631,7 @@ const Home = async () => {
         })
       );
     },
-    [navigate, userType, jarId, jar, userData]
+    [navigate, userType, jarId, jar, userData, setPopup]
   );
 
   const asyncNav = useCallback(
@@ -781,7 +763,10 @@ const Home = async () => {
               style={{ justifyContent: "space-between", alignItems: "center" }}
             >
               {capsule?.data?.emoji && capsule?.data?.emoji !== 0 ? (
-                <img src={`/images/emozi_0${capsule?.data?.emoji}.png`} />
+                <img
+                  src={`/images/emozi_0${capsule?.data?.emoji}.png`}
+                  alt="emozi"
+                />
               ) : (
                 <div />
               )}
