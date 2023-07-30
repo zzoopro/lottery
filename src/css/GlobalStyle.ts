@@ -15,7 +15,7 @@ ${reset}
 }
 @font-face{
   font-family:'BitBit';
-  src: url("/fonts/BitBit/DNFBitBitOTF.otf") format("opentype");
+  src: url("/fonts/Bitbit/DNFBitBitOTF.otf") format("opentype");
 }
 @font-face{
   font-family:'Han Sans';
