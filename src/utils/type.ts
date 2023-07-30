@@ -20,6 +20,7 @@ export interface ICapsule {
   capsuleId: string;
   authorNickname: string;
   createdAt: string;
+  emoji: number;
   emojiReply: string;
   type: string;
   color: string;
@@ -39,10 +40,12 @@ export interface ICapsuleDetail {
   content: string;
   createdAt: string;
   emojiReply: any;
+  emoji: number;
   jarId: string;
-  type: string;
+  type: "normal" | "reply";
   color: string;
   public: boolean;
   read: boolean;
   replied: boolean;
+  replyCapsule?: string;
 }

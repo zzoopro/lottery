@@ -100,3 +100,20 @@ export const randomCapsule = async (jarId: string) => {
     .then((response) => response.json())
     .catch((error: Error) => ErrNetwork(error));
 };
+
+interface IReplyEmoji {
+  emoji: number;
+  dumpField: string;
+}
+export const replyEmoji = async (
+  jarId: string,
+  capsuleId: string,
+  data: IReplyEmoji
+) => {
+  return await FetchInstance.post(
+    `${SERVER_URL}/${JAR}/${jarId}/${capsuleId}/reply/emoji`,
+    data
+  )
+    .then((response) => response.json())
+    .catch((error: Error) => ErrNetwork(error));
+};

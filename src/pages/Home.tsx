@@ -151,6 +151,30 @@ const Message = styled.textarea`
   font-weight: 500;
   line-height: 167.023%;
 `;
+
+const MessageSlider = styled(motion.div)`
+  display: flex;
+  width: 100%;
+  height: 65%;
+  min-height: 350px;
+  flex-shrink: 0;
+  overflow-y: scroll;
+
+  padding: 25px;
+  border-radius: 20px;
+  border: 1px solid var(--unnamed, #c6c6c6);
+  background: var(--unnamed, rgba(255, 255, 255, 0.14));
+  margin: 20px 0px;
+`;
+
+const Content = styled(motion.span)`
+  font-size: 20px;
+  font-family: Noto Sans Kr;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 167.023%;
+`;
+
 const To = styled.h3`
   color: black;
   font-family: Noto Sans Kr;
@@ -321,6 +345,18 @@ const Emozi = styled.div<{ selected: boolean }>`
   }
 `;
 
+const Dots = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const Dot = styled(motion.div)`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin: 0px 20px;
+`;
+
 type DragEventHandlerType = (
   event: MouseEvent | TouchEvent | PointerEvent,
   info: PanInfo
@@ -360,6 +396,7 @@ const Home = () => {
   const [capsule, setCapsule] = useState<CapsuleStatus>();
   const [isCopyMessage, setIsCopyMessage] = useState<boolean>(false);
   const [emozi, setEmozi] = useState<number>(0);
+  const [dot, setDot] = useState<number>(0);
 
   const [isNewbie, setIsNewbie] = useRecoilState(isNewbieAtom);
 
@@ -472,8 +509,10 @@ const Home = () => {
               content: "비정상적인 캡슐입니다.\n고객센터에 문의해주세요.",
             })
           );
-        if (userType === "master" && capsule.read) return;
+
         if (userType === "guest" && !capsule.read) return;
+        if (userType === "master" && capsule.read)
+          return openCapsule(capsuleId);
         if (userType === "guest" && capsule.read && capsule.public)
           return openCapsule(capsuleId);
 
@@ -527,12 +566,23 @@ const Home = () => {
 
   const goToReply = useCallback(
     (capsuleId: string): MouseEventHandler =>
-      () => {
+      async () => {
+        if (emozi !== 0) {
+          const response: IResponse = await API.replyEmoji(jarId!, capsuleId, {
+            emoji: emozi,
+            dumpField: "",
+          });
+          if (response.status !== 200)
+            return setPopup(showPopup({ content: response.message ?? "" }));
+          return navigate(
+            `/${userType}/write/${capsule?.data?.jarId}/reply/setting?capsuleId=${capsuleId}&recipient=${capsule?.data?.authorNickname}`
+          );
+        }
         navigate(
-          `/${userType}/write/${capsule?.data?.jarId}/reply/setting?capsuleId=${capsuleId}&recipient=${capsule?.data?.authorNickname}&emozi=${emozi}`
+          `/${userType}/write/${capsule?.data?.jarId}/reply/setting?capsuleId=${capsuleId}&recipient=${capsule?.data?.authorNickname}`
         );
       },
-    [navigate, jarId, userType, capsule]
+    [navigate, jarId, userType, capsule, emozi]
   );
 
   const debounced = useCallback(
