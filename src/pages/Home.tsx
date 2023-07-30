@@ -361,7 +361,7 @@ interface CapsuleStatus {
   data: ICapsuleDetail | null;
 }
 
-const Home = async () => {
+const Home = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
