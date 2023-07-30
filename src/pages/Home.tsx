@@ -88,6 +88,14 @@ const Capsule = styled(motion.div)<{ bgcolor: string }>`
   border: 2px solid #263ca6;
 `;
 
+const CapsuleEmozi = styled(Img)`
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 35px;
+  aspect-ratio: 1 / 1;
+`;
+
 const CapsuleLight = styled(Img)`
   position: absolute;
   left: 10%;
@@ -167,7 +175,7 @@ const From = styled.h3`
   font-family: Noto Sans Kr;
   color: black;
   font-weight: 700;
-  align-self: flex-end;
+  align-self: flex-start;
   font-size: 20px;
   font-style: normal;
   strong {
@@ -332,7 +340,7 @@ const Dot = styled(motion.div)<{ selected: boolean }>`
   height: 15px;
   border-radius: 15px;
   margin: 0px 7px;
-  background-color: ${({ selected }) => (selected ? "#333" : "#d9d9d9")};
+  background-color: ${({ selected }) => (selected ? "#5571EE" : "#d9d9d9")};
   transition: all 0.2s ease-in-out;
 `;
 
@@ -711,6 +719,9 @@ const Home = () => {
               >
                 <Line />
                 <CapsuleLight src="/images/capsule-light.png" />
+                {item?.emoji && (
+                  <CapsuleEmozi src={`/images/emozi_0${item?.emoji}.png`} />
+                )}
               </Capsule>
             );
           })}
@@ -743,8 +754,8 @@ const Home = () => {
             >
               <To>
                 <strong>To.</strong>{" "}
-                {capsule?.data?.type === "normal" ||
-                (capsule?.data?.type === "reply" && dot === 0)
+                {!capsule?.data?.replyCapsule ||
+                (capsule?.data?.replyCapsule && dot === 0)
                   ? jar?.userNickname
                   : capsule?.data?.authorNickname}
               </To>
@@ -757,8 +768,16 @@ const Home = () => {
               />
             </FlexBox>
 
-            <Message disabled value={capsule?.data?.content}></Message>
-            {capsule?.data?.type === "reply" && (
+            <Message
+              disabled
+              value={
+                !capsule?.data?.replyCapsule ||
+                (capsule?.data?.replyCapsule && dot === 0)
+                  ? capsule?.data?.content
+                  : capsule?.data?.replyCapsule
+              }
+            ></Message>
+            {capsule?.data?.replyCapsule && (
               <Dots>
                 <Dot selected={dot === 0} onClick={() => setDot(0)} />{" "}
                 <Dot selected={dot === 1} onClick={() => setDot(1)} />
@@ -778,15 +797,13 @@ const Home = () => {
               )}
               <From>
                 <strong>From.</strong>{" "}
-                {isExist(capsule?.data?.authorNickname)
-                  ? capsule?.data?.type === "normal" ||
-                    (capsule?.data?.type === "reply" && dot === 0)
-                    ? capsule?.data?.authorNickname
-                    : jar?.userNickname
-                  : "익명의 누군가"}
+                {!capsule?.data?.replyCapsule ||
+                (capsule?.data?.replyCapsule && dot === 0)
+                  ? capsule?.data?.authorNickname ?? "익명의 누군가"
+                  : jar?.userNickname}
               </From>
             </FlexBox>
-            {capsule?.data?.emoji !== null && (
+            {!capsule?.data?.emoji && (
               <Emozis>
                 {Array.from({ length: 4 })
                   .map((x, i) => i + 1)
