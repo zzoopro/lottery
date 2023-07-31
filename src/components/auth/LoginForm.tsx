@@ -45,8 +45,11 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data: FieldValues) => {
+  useEffect(() => {
     localStorage.removeItem(AUTH);
+  }, [])
+
+  const onSubmit = async (data: FieldValues) => {    
     const response = await API.login(data as ILogin);
     if (response.status !== 200) {
       return setPopup(showPopup({ content: response.message }));
