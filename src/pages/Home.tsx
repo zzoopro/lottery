@@ -213,7 +213,7 @@ const Title = styled.h1`
   font-family: BitBit;
   color: #fff;
   font-size: 36px;
-  font-weight: bold;
+  font-weight: normal;
 `;
 
 const CoinCount = styled.strong`
