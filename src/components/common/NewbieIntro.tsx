@@ -142,7 +142,7 @@ const NewbieIntro = () => {
       case 2:
         return (
           <span>
-            타인에게 <strong>편지를 쓰거나 답장을 보내면</strong> 코인은 얻을 수
+            타인에게 <strong>편지를 쓰거나 답장을 보내면</strong> 코인을 얻을 수
             있어요!
           </span>
         );
