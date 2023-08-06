@@ -545,7 +545,7 @@ const Home = () => {
 
       return setPopup(
         showPopup({
-          content: `코인 1개가 소진돼요!\n선택한 편지를 읽어볼까요?`,
+          content: `코인 1개가 소진돼요!\n랜덤 편지를 읽어볼까요?`,
           numberOfButton: 2,
           confirmText: "읽을래요",
           rejectText: "아니요",
