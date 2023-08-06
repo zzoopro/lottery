@@ -25,6 +25,7 @@ ${reset}
 * {
   box-sizing: border-box;    
   font-family: Noto Sans, Noto Sans KR, AppleSDGothic sans-serif;
+  outline: none;
 }
 
 body {    
