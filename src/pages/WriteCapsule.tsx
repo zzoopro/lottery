@@ -190,8 +190,8 @@ const WriteCapsule = () => {
         showPopup({
           content:
             writeType === "send"
-              ? "캡슐이 잘 전달됬어요."
-              : "답장이 잘 전달됬어요.",
+              ? "캡슐이 잘 전달됐어요."
+              : "답장이 잘 전달됐어요.",
           onConfirm: () =>
             navigate(
               `/${
