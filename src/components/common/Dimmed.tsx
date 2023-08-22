@@ -33,6 +33,7 @@ const dimmedVariants: Variants = {
 interface DimmedProps {
   children: ReactNode;
 }
+
 const Dimmed = ({ children }: DimmedProps) => {
   const popup = useRecoilValue(popupAtom);
 
