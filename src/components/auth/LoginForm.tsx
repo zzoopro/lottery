@@ -47,19 +47,19 @@ const LoginForm = () => {
 
   useEffect(() => {
     localStorage.removeItem(AUTH);
-  }, [])
+  }, []);
 
-  const onSubmit = async (data: FieldValues) => {    
+  const onSubmit = async (data: FieldValues) => {
     const response = await API.login(data as ILogin);
-    if (response.status !== 200) {
-      return setPopup(showPopup({ content: response.message }));
+    if (response?.status !== 200) {
+      return setPopup(showPopup({ content: response?.message }));
     }
-    localStorage.setItem(AUTH, response.data.token);
+    localStorage.setItem(AUTH, response?.data.token);
     queryClient.removeQueries();
     if (qs.get("jarId")) {
       return navigate(`/master/write/${qs.get("jarId")}/send/setting`);
     }
-    navigate(`/master/capsule-box/${response.data.jarId}`, { replace: true });
+    navigate(`/master/capsule-box/${response?.data.jarId}`, { replace: true });
   };
 
   return (
